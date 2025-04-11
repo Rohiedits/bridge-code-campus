@@ -1,605 +1,846 @@
+// import React, { useState } from 'react';
+// import 'bootstrap/dist/css/bootstrap.min.css';
+// import { Container, Nav, Tab, Row, Col, Card, Button, Accordion } from 'react-bootstrap';
 
-import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
-import CourseCard from "@/components/Course/CourseCard";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { BookOpen, Filter, Search, Upload } from "lucide-react";
-import { toast } from "@/hooks/use-toast";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
+// const LearningHub = () => {
+//   const [key, setKey] = useState('EEE');
 
-// Mock course data
-const allCourses = [
-  {
-    id: "1",
-    title: "Data Structures & Algorithms",
-    description: "Learn fundamental data structures and algorithms needed for software development and coding interviews.",
-    instructor: "Dr. Jane Smith",
-    category: "Data Structures",
-    progress: 65,
-    dueAssignments: 2,
-    totalStudents: 120,
-    materials: [
-      { id: "m1", name: "Introduction to Big O Notation", type: "pdf" },
-      { id: "m2", name: "Arrays and Linked Lists", type: "pdf" },
-    ]
-  },
-  {
-    id: "2",
-    title: "Web Development Fundamentals",
-    description: "Introduction to HTML, CSS, JavaScript and modern frameworks for building web applications.",
-    instructor: "Prof. Alex Johnson",
-    category: "Programming",
-    progress: 38,
-    dueAssignments: 1,
-    totalStudents: 85,
-    materials: [
-      { id: "m3", name: "HTML Basics", type: "pdf" },
-      { id: "m4", name: "CSS Styling Guide", type: "pdf" },
-    ]
-  },
-  {
-    id: "3",
-    title: "Database Systems",
-    description: "Learn about relational database design, SQL, and basic database administration concepts.",
-    instructor: "Dr. Michael Wong",
-    category: "Programming",
-    progress: 82,
-    dueAssignments: 0,
-    totalStudents: 95,
-    materials: [
-      { id: "m5", name: "Introduction to SQL", type: "pdf" },
-      { id: "m6", name: "Database Normalization", type: "pdf" },
-    ]
-  },
-  {
-    id: "4",
-    title: "Advanced Python Programming",
-    description: "Take your Python skills to the next level with advanced concepts and practical applications.",
-    instructor: "Dr. Lisa Chen",
-    category: "Programming",
-    progress: 20,
-    dueAssignments: 3,
-    totalStudents: 74,
-    materials: [
-      { id: "m7", name: "Python OOP Concepts", type: "pdf" },
-      { id: "m8", name: "Functional Programming in Python", type: "pdf" },
-    ]
-  },
-  {
-    id: "5",
-    title: "Machine Learning Fundamentals",
-    description: "Introduction to machine learning algorithms, statistical modeling, and practical implementation.",
-    instructor: "Prof. David Kim",
-    category: "Data Science",
-    progress: 0,
-    dueAssignments: 0,
-    totalStudents: 110,
-    materials: []
-  },
-  {
-    id: "6",
-    title: "Software Engineering Practices",
-    description: "Learn professional software development methodologies, tools, and best practices.",
-    instructor: "Dr. Robert Taylor",
-    category: "Software Engineering",
-    progress: 52,
-    dueAssignments: 1,
-    totalStudents: 68,
-    materials: [
-      { id: "m9", name: "Agile Development", type: "pdf" },
-      { id: "m10", name: "Git Version Control", type: "pdf" },
-    ]
-  },
-  {
-    id: "7",
-    title: "Discrete Mathematics",
-    description: "Mathematical structures and concepts fundamental to computer science and programming.",
-    instructor: "Dr. Sarah Johnson",
-    category: "Mathematics",
-    progress: 75,
-    dueAssignments: 0,
-    totalStudents: 92,
-    materials: [
-      { id: "m11", name: "Set Theory", type: "pdf" },
-      { id: "m12", name: "Graph Theory", type: "pdf" },
-    ]
-  },
-  {
-    id: "8",
-    title: "Computer Networks",
-    description: "Principles and practices of computer networking, protocols, and network programming.",
-    instructor: "Prof. Thomas Lee",
-    category: "Computer Systems",
-    progress: 30,
-    dueAssignments: 2,
-    totalStudents: 78,
-    materials: [
-      { id: "m13", name: "Network Protocols", type: "pdf" },
-      { id: "m14", name: "TCP/IP", type: "pdf" },
-    ]
-  },
-  {
-    id: "9",
-    title: "Artificial Intelligence",
-    description: "Fundamentals of AI including search algorithms, knowledge representation, and reasoning.",
-    instructor: "Dr. Michelle Park",
-    category: "Artificial Intelligence",
-    progress: 0,
-    dueAssignments: 0,
-    totalStudents: 105,
-    materials: []
-  },
-];
+//   const courses = {
+//     EEE: {
+//       subjects: [
+//         {
+//           name: 'Semister 1-1',
+//           notes: ['MATHEMATICS-I', 'PROGRAMMING FOR PROBLEM SOLVING USING C', 'ENGINEERING DRAWING & DESIGN','COMMUNICATIVE ENGLISH'],
+//           videos: ['Introduction to Circuits', 'Kirchhoff\'s Laws', 'AC Analysis'],
+//           roadmap: 'Start with basic circuit concepts, move to network analysis, then advanced topics.'
+//         },
+//         {
+//           name: 'Power Systems',
+//           notes: ['Power Generation', 'Transmission Lines', 'Power Distribution'],
+//           videos: ['Power System Basics', 'Transmission Fundamentals', 'Distribution Networks'],
+//           roadmap: 'Begin with generation concepts, understand transmission, finally distribution systems.'
+//         }
+//       ]
+//     },
+//     CSE: {
+//       subjects: [
+//         {
+//           name: 'Data Structures',
+//           notes: ['Arrays & Linked Lists', 'Trees & Graphs', 'Algorithms'],
+//           videos: ['DS Introduction', 'Tree Traversals', 'Graph Algorithms'],
+//           roadmap: 'Master basic data structures before moving to advanced concepts.'
+//         },
+//         {
+//           name: 'Operating Systems',
+//           notes: ['Process Management', 'Memory Management', 'File Systems'],
+//           videos: ['OS Fundamentals', 'Process Scheduling', 'Memory Allocation'],
+//           roadmap: 'Start with process concepts, then memory, finally file systems.'
+//         }
+//       ]
+//     },
+//     ECE: {
+//       subjects: [
+//         {
+//           name: 'Digital Electronics',
+//           notes: ['Boolean Algebra', 'Logic Gates', 'Sequential Circuits'],
+//           videos: ['Digital Basics', 'Combinational Circuits', 'Flip Flops'],
+//           roadmap: 'Begin with boolean logic, move to combinational and sequential design.'
+//         },
+//         {
+//           name: 'Communication Systems',
+//           notes: ['Analog Communication', 'Digital Communication', 'Information Theory'],
+//           videos: ['Communication Basics', 'Modulation Techniques', 'Digital Protocols'],
+//           roadmap: 'Start with analog basics, then digital concepts, finally advanced topics.'
+//         }
+//       ]
+//     },
+//     ME: {
+//       subjects: [
+//         {
+//           name: 'Thermodynamics',
+//           notes: ['Laws of Thermodynamics', 'Heat Transfer', 'Power Cycles'],
+//           videos: ['Thermo Basics', 'Heat Exchange', 'Engine Cycles'],
+//           roadmap: 'Master fundamental laws, then applications and cycles.'
+//         },
+//         {
+//           name: 'Machine Design',
+//           notes: ['Machine Elements', 'Design Principles', 'CAD Fundamentals'],
+//           videos: ['Design Basics', 'Element Analysis', 'CAD Tutorial'],
+//           roadmap: 'Learn basic elements, then design principles, finally CAD tools.'
+//         }
+//       ]
+//     },
+//     Civil: {
+//       subjects: [
+//         {
+//           name: 'Structural Analysis',
+//           notes: ['Force Systems', 'Beams & Frames', 'Structure Design'],
+//           videos: ['Structure Basics', 'Beam Analysis', 'Frame Design'],
+//           roadmap: 'Start with force concepts, then beam analysis, finally complete structures.'
+//         },
+//         {
+//           name: 'Geotechnical Engineering',
+//           notes: ['Soil Mechanics', 'Foundation Design', 'Earth Structures'],
+//           videos: ['Soil Properties', 'Foundation Types', 'Earth Retaining Structures'],
+//           roadmap: 'Begin with soil mechanics, move to foundations, then earth structures.'
+//         }
+//       ]
+//     }
+//   };
 
-const Courses = () => {
-  const [searchTerm, setSearchTerm] = useState("");
-  const [categoryFilter, setCategoryFilter] = useState("all");
-  const [showFilters, setShowFilters] = useState(false);
-  const [activeTab, setActiveTab] = useState("enrolled");
-  const [userRole, setUserRole] = useState("student");
-  const [courses, setCourses] = useState(allCourses);
-  const [selectedCourse, setSelectedCourse] = useState(null);
-  const [materialName, setMaterialName] = useState("");
-  const [materialDescription, setMaterialDescription] = useState("");
-  const [assignmentName, setAssignmentName] = useState("");
-  const [assignmentDescription, setAssignmentDescription] = useState("");
-  const [assignmentDueDate, setAssignmentDueDate] = useState("");
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
-  
-  const navigate = useNavigate();
-  
-  useEffect(() => {
-    // Check if user is logged in
-    const userEmail = localStorage.getItem("userEmail");
-    
-    if (!userEmail) {
-      toast({
-        title: "Authentication required",
-        description: "Please log in to access this page",
-        variant: "destructive",
-      });
-      navigate("/login");
-      return;
-    }
-    
-    // Set role based on email domain
-    if (userEmail.includes("@faculty.com")) {
-      setUserRole("faculty");
-    } else if (userEmail.includes("@admin.com")) {
-      setUserRole("admin");
-    } else {
-      setUserRole("student");
-    }
-  }, [navigate]);
-  
-  // Extract unique categories for filter
-  const categories = ["all", ...new Set(courses.map(course => course.category.toLowerCase()))];
-  
-  // Filter and sort courses based on current filters
-  const filteredCourses = courses.filter(course => {
-    const matchesSearch = course.title.toLowerCase().includes(searchTerm.toLowerCase()) || 
-                          course.instructor.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesCategory = categoryFilter === "all" || course.category.toLowerCase() === categoryFilter;
-    
-    // For enrolled tab, show courses with progress > 0
-    if (activeTab === "enrolled" && course.progress === 0) {
-      return false;
-    }
-    
-    // For available tab, show courses with progress === 0
-    if (activeTab === "available" && course.progress > 0) {
-      return false;
-    }
-    
-    return matchesSearch && matchesCategory;
-  });
-  
-  // Sort courses: courses with due assignments first, then by progress
-  const sortedCourses = [...filteredCourses].sort((a, b) => {
-    if ((a.dueAssignments || 0) > 0 && (b.dueAssignments || 0) === 0) return -1;
-    if ((a.dueAssignments || 0) === 0 && (b.dueAssignments || 0) > 0) return 1;
-    return (b.progress || 0) - (a.progress || 0);
-  });
+//   return (
+//     <Container fluid className="py-4">
+//       <h1 className="text-center mb-4">Engineering Learning Hub</h1>
+      
+//       <Tab.Container activeKey={key} onSelect={(k) => setKey(k)}>
+//         <Row>
+//           <Col sm={3}>
+//             <Nav variant="pills" className="flex-column">
+//               {Object.keys(courses).map((branch) => (
+//                 <Nav.Item key={branch}>
+//                   <Nav.Link eventKey={branch} className="mb-2">
+//                     {branch}
+//                   </Nav.Link>
+//                 </Nav.Item>
+//               ))}
+//             </Nav>
+//           </Col>
+          
+//           <Col sm={9}>
+//             <Tab.Content>
+//               {Object.entries(courses).map(([branch, data]) => (
+//                 <Tab.Pane key={branch} eventKey={branch}>
+//                   <h2 className="mb-4">{branch} Engineering</h2>
+                  
+//                   {data.subjects.map((subject, index) => (
+//                     <Card key={index} className="mb-4">
+//                       <Card.Header className="bg-primary text-white">
+//                         <h3 className="mb-0">{subject.name}</h3>
+//                       </Card.Header>
+                      
+//                       <Card.Body>
+//                         <Accordion>
+//                           <Accordion.Item eventKey="0">
+//                             <Accordion.Header>Digital Notes & PDFs</Accordion.Header>
+//                             <Accordion.Body>
+//                               <ul>
+//                                 {subject.notes.map((note, i) => (
+//                                   <li key={i}>
+//                                     {note}
+//                                     <Button variant="link" className="ms-2">Download PDF</Button>
+//                                   </li>
+//                                 ))}
+//                               </ul>
+//                             </Accordion.Body>
+//                           </Accordion.Item>
+                          
+//                           <Accordion.Item eventKey="1">
+//                             <Accordion.Header>Video Lectures</Accordion.Header>
+//                             <Accordion.Body>
+//                               <ul>
+//                                 {subject.videos.map((video, i) => (
+//                                   <li key={i}>
+//                                     {video}
+//                                     <Button variant="link" className="ms-2">Watch Video</Button>
+//                                   </li>
+//                                 ))}
+//                               </ul>
+//                             </Accordion.Body>
+//                           </Accordion.Item>
+                          
+//                           <Accordion.Item eventKey="2">
+//                             <Accordion.Header>Learning Roadmap</Accordion.Header>
+//                             <Accordion.Body>
+//                               <p>{subject.roadmap}</p>
+//                             </Accordion.Body>
+//                           </Accordion.Item>
+//                         </Accordion>
+//                       </Card.Body>
+//                     </Card>
+//                   ))}
+//                 </Tab.Pane>
+//               ))}
+//             </Tab.Content>
+//           </Col>
+//         </Row>
+//       </Tab.Container>
+//     </Container>
+//   );
+// };
 
-  const handleAddMaterial = () => {
-    if (!materialName.trim()) {
-      toast({
-        title: "Material name is required",
-        variant: "destructive",
-      });
-      return;
-    }
-    
-    // Create a new material
-    const newMaterial = {
-      id: `m${Date.now()}`,
-      name: materialName,
-      description: materialDescription,
-      type: "pdf",
-      dateAdded: new Date().toISOString(),
-    };
-    
-    // Update courses array with the new material
-    const updatedCourses = courses.map(course => {
-      if (course.id === selectedCourse.id) {
-        return {
-          ...course,
-          materials: [...(course.materials || []), newMaterial],
-        };
-      }
-      return course;
-    });
-    
-    setCourses(updatedCourses);
-    
-    // Reset form fields
-    setMaterialName("");
-    setMaterialDescription("");
-    
-    toast({
-      title: "Material added successfully",
-      description: `"${materialName}" has been added to ${selectedCourse.title}`,
-    });
-    
-    setIsDialogOpen(false);
-  };
+// export default LearningHub;
 
-  const handleAddAssignment = () => {
-    if (!assignmentName.trim() || !assignmentDueDate) {
-      toast({
-        title: "Assignment name and due date are required",
-        variant: "destructive",
-      });
-      return;
+
+//2
+
+import React, { useState } from 'react';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import { Container, Nav, Tab, Row, Col, Card, Button, Accordion } from 'react-bootstrap';
+
+const LearningHub = () => {
+  const [key, setKey] = useState('EEE');
+
+  const courses = {
+    EEE: {
+      subjects: [
+        {
+          name: 'Semester 1-1 & 1-2 (COMMON SUBJECTS) SUBJECT NOTES',
+          notes: [
+            { title: 'MATHEMATICS-I', url: 'https://drive.google.com/drive/u/0/folders/1as25YSOvkMvSjjsRUHQiP_gnQK8zPjw9' },
+            { title: 'Engineering Physics', url: 'https://drive.google.com/file/d/1XjbJHvRTcoM9gmywbre-2W2DKwthDKB0/view?usp=drivesdk' },
+            { title: 'Chemistry', url: 'https://drive.google.com/file/d/1XXlLU-QAlM0DX_AvcRHdeonMIyxw_nTV/view?usp=drivesdk' },
+            { title: 'PPS', url: 'https://drive.google.com/file/d/1XfpptZNhhl_hN-oLZ-_gMTx9phv32dOG/view?usp=drivesdk' },
+            { title: 'BEE', url: 'https://drive.google.com/file/d/1_5rzLLCjhMAAUUaXSm0AJQzeDsSfEpsz/view?usp=drivesdk' },
+            { title: 'Maths - II ', url: 'https://drive.google.com/drive/folders/1nfIXg1E5sKDmldR7PerdVOq3UvUQSPHu' },
+            { title: 'Applied physics', url: 'https://drive.google.com/file/d/1XrYYeM1RYoRc-UxhfSMlm802KV83JLXh/view?usp=drivesdk' },
+            { title: 'Engineering Mechanics', url: 'https://drive.google.com/file/d/1LkJflaFhpAsDCvv-N1Re4Caahv4mLju9/view?usp=drivesdk' }
+            
+          ],
+          videos: ['Introduction to Circuits', 'Kirchhoff\'s Laws', 'AC Analysis'],
+          roadmap: 'Start with basic circuit concepts, move to network analysis, then advanced topics.'
+        },
+        {
+          name: 'Semester 2-1 SUBJECT NOTES',
+          notes: [
+            { title: 'Electronic Circuit Analysis', url: 'https://drive.google.com/drive/folders/1I1GgyolnsvmbltLSqXzN4eTQc0fbGuWA' },
+            { title: 'Analog Electronics', url: 'https://drive.google.com/drive/folders/1I1GgyolnsvmbltLSqXzN4eTQc0fbGuWA' },
+            { title: 'Electrical Machines I', url: 'https://drive.google.com/drive/folders/1I1GgyolnsvmbltLSqXzN4eTQc0fbGuWA' },
+            { title: 'Engineering Mechanics', url: 'https://drive.google.com/drive/folders/1I1GgyolnsvmbltLSqXzN4eTQc0fbGuWA' }
+          ],
+          videos: ['Power System Basics', 'Transmission Fundamentals', 'Distribution Networks'],
+          roadmap: 'Begin with generation concepts, understand transmission, finally distribution systems.'
+        },
+        {
+          name: 'Semester 2-2 SUBJECT NOTES',
+          notes: [ 
+            { title: 'Control systems.', url: '/Controlsystems' },
+            { title: 'Electrical Machines II ', url: '/em_2' },
+            { title: 'Digital-Design ', url: '/Dd' },
+            { title: 'Transmission&Distribution ', url: '/Td' },
+            { title: 'Power Systems - I', url: 'https://drive.google.com/drive/folders/1yem18C_smgP0CuxHcZFKcRI2XYhNWmU5' },
+            { title: 'Laplace Transforms, Numerical methods  & Complex Variables', url: 'https://drive.google.com/drive/folders/1yem18C_smgP0CuxHcZFKcRI2XYhNWmU5' }
+          ],
+          videos: ['Power System Basics', 'Transmission Fundamentals', 'Distribution Networks'],
+          roadmap: 'Begin with generation concepts, understand transmission, finally distribution systems.'
+        },
+        {
+          name: 'Semester 3-1 SUBJECT NOTES',
+          notes: [
+            { title: 'POWER ELECTRONICS.', url: 'https://drive.google.com/file/d/1dpT0NVz11yzcSaVZX1KxLKySojDriWLc/view?usp=drivesdk' },
+            { title: 'EMI', url: 'https://drive.google.com/drive/folders/1jTOIbJObbAOw2NMMsvU7LHy0azU9sJes?usp=sharing' },
+            { title: 'BEFA', url: 'https://drive.google.com/folderview?id=1qU3Wp6C_5uYKZjNfYOOlZFqkTtD7MgoL' },
+            { title: 'EMF', url: 'https://drive.google.com/drive/folders/1yzZ-4jAxIrI4487neg14EbXKXVytMixC?usp=share_link' },
+            { title: 'Measurements and Instrumentation', url: 'https://drive.google.com/file/d/1tPEDE8w2J18RWavqzgzMUWZDz9tJ_JYL/view?usp=share_link' },
+            { title: 'Power Systems - I', url: 'https://drive.google.com/file/d/15K8qpNyCNkS0dNJsXo8CQ15uqavuR7dH/view?usp=share_link' },
+            { title: 'Power Systems - II', url: 'https://drive.google.com/file/d/1-rovX4iCsTfukRsklls7DzUM2ltsit9h/view?usp=sharing' }
+          ],
+          videos: ['Power System Basics', 'Transmission Fundamentals', 'Distribution Networks'],
+          roadmap: 'Begin with generation concepts, understand transmission, finally distribution systems.'
+        },
+        {
+          name: 'Semester 3-2 SUBJECT NOTES',
+          notes: [
+            { title: 'Signals and Systems', url: 'https://drive.google.com/file/d/1xOPb6iJcvAvHFOoIyTxpYMi6jTu31EqF/view?usp=share_link' },
+            { title: 'Microprocessor and Micro controllers', url: 'https://drive.google.com/file/d/1odm974_F6Zhw7UIVuntQ0yDQKh4YHGRz/view?usp=share_link' },
+            { title: 'Power system Protection Power system operation and control ', url: 'https://drive.google.com/file/d/1WH9oBNZ1nO_zFTrpH4sLSK-2b0FgKsxB/view?usp=share_link' },
+            { title: 'ELECTRONIC SENSORS', url: 'https://drive.google.com/drive/folders/1n01CG4mOr998kjRE4fBnOp0qtON7V5ph?usp=sharing' },
+            { title: 'DIGITAL SIGNAL PROCESSING', url: 'https://drive.google.com/drive/folders/1Co2hYgoCgbT0IPPm7V524oxu1Vs-vAUZ?usp=sharing' },
+            { title: 'Power Semi Conductor Drive', url: 'https://drive.google.com/file/d/1N_Z2SMdY6pHGp5mG58j0iWUI-HRVLAJw/view?usp=share_link' },
+            { title: 'NCES', url: 'https://drive.google.com/file/d/1M9PY-QIjerUYXtBG3bil1rb-KppReOxq/view?usp=sharing' }
+          ],
+          videos: ['Power System Basics', 'Transmission Fundamentals', 'Distribution Networks'],
+          roadmap: 'Begin with generation concepts, understand transmission, finally distribution systems.'
+        },
+        {
+          name: 'Semester 4-1 SUBJECT NOTES',
+          notes: [
+            { title: 'Principles of Entrepreneurship', url: 'https://drive.google.com/file/d/1Mk1zjj1JQ5MjWnWBG9bxf1exnEUHrwv9/view?usp=drivesdk' },
+            { title: 'Switch Gear and protection', url: 'https://drive.google.com/file/d/1-jQcs4kCgDi6WemKGfluBEMCr3gn2WBg/view?usp=drivesdk' },
+            { title: 'Utilisation of Electrical Energy', url: 'https://drive.google.com/file/d/1syAxbnjCdKs5-YI6FsAL31SWXJwjxwoa/view?usp=drivesdk' },
+            { title: 'Industrial electrical Systems', url: 'https://drive.google.com/file/d/1X3f-m6VAHYT51igXf79Onxp_Sn5fc1z0/view?usp=drivesdk' },
+            { title: 'Digital control Systems', url: 'https://drive.google.com/drive/folders/1XHeaW5cNuQgHADTkiIMkm4EfHDx3uGsf' },
+            { title: 'ELECTRICAL AND HYBRID VEHICLES', url: 'https://drive.google.com/file/d/1mzHeoQdQWI069tQK0CyG6RakxGdbu0o_/view?usp=sharing' },
+            { title: 'HVDC', url: 'https://drive.google.com/file/d/1mKc_c7n2NxHE1RqXMcyqnGHrrdOoll3S/view?usp=drive_link' },
+          ],
+          videos: ['Power System Basics', 'Transmission Fundamentals', 'Distribution Networks'],
+          roadmap: 'Begin with generation concepts, understand transmission, finally distribution systems.'
+        },
+        {
+          name: 'Semester 4-2 SUBJECT NOTES',
+          notes: [
+            { title: 'Power Quality and Facts', url: 'https://drive.google.com/file/d/1StjDnE6iXvHqJod8uXRaVAfQgPQVVgYP/view?usp=drive_link' },
+            { title: 'EIA', url: 'https://drive.google.com/drive/folders/1A136SnWeRlzZ6lel49FT9cxZ4wobvHUU?usp=drive_link' },
+            { title: 'NCES', url: 'https://drive.google.com/file/d/1LLoMq3seVGs4dJJIMf4S182ISSnDKSJs/view?usp=drive_link' }
+          ],
+          videos: ['Power System Basics', 'Transmission Fundamentals', 'Distribution Networks'],
+          roadmap: 'Begin with generation concepts, understand transmission, finally distribution systems.'
+        }
+      ]
+    },
+    ECE: {
+      subjects: [
+        {
+          name: 'Semester 1-1 & 1-2 (COMMON SUBJECTS) SUBJECT NOTES',
+          notes: [
+            { title: 'MATHEMATICS-I', url: 'https://drive.google.com/drive/u/0/folders/1as25YSOvkMvSjjsRUHQiP_gnQK8zPjw9' },
+            { title: 'Engineering Physics', url: 'https://drive.google.com/file/d/1XjbJHvRTcoM9gmywbre-2W2DKwthDKB0/view?usp=drivesdk' },
+            { title: 'Chemistry', url: 'https://drive.google.com/file/d/1XXlLU-QAlM0DX_AvcRHdeonMIyxw_nTV/view?usp=drivesdk' },
+            { title: 'PPS', url: 'https://drive.google.com/file/d/1XfpptZNhhl_hN-oLZ-_gMTx9phv32dOG/view?usp=drivesdk' },
+            { title: 'BEE', url: 'https://drive.google.com/file/d/1_5rzLLCjhMAAUUaXSm0AJQzeDsSfEpsz/view?usp=drivesdk' },
+            { title: 'Maths - II ', url: 'https://drive.google.com/drive/folders/1nfIXg1E5sKDmldR7PerdVOq3UvUQSPHu' },
+            { title: 'Applied physics', url: 'https://drive.google.com/file/d/1XrYYeM1RYoRc-UxhfSMlm802KV83JLXh/view?usp=drivesdk' },
+            { title: 'Engineering Mechanics', url: 'https://drive.google.com/file/d/1LkJflaFhpAsDCvv-N1Re4Caahv4mLju9/view?usp=drivesdk' }
+            
+          ],
+          videos: ['Introduction to Circuits', 'Kirchhoff\'s Laws', 'AC Analysis'],
+          roadmap: 'Start with basic circuit concepts, move to network analysis, then advanced topics.'
+        },
+        {
+          name: 'Semester 2-1 SUBJECT NOTES',
+          notes: [
+            { title: 'Electronic Devices and Circuits', url: 'https://drive.google.com/drive/folders/1Lohpb4UX4I7pTAj_xbtNKBcgXe4rJilY?usp=sharing' },
+            { title: 'Network Analysis and Transmission Lines', url: 'https://drive.google.com/drive/folders/1OoWTnQfxsnA_Dv3eWBoz9MxkmDmors1R?usp=sharing' },
+            { title: 'Digital System  Design', url: 'https://drive.google.com/drive/folders/1Ls-4k0acfziFhySHWymoV878IGT2RWSQ?usp=sharing' },
+            { title: 'Signals and Systems', url: 'https://drive.google.com/drive/folders/1o5aLF22PaFQsMYXA1Jv1HsIITSzMhCKv?usp=sharing' },
+            { title: 'Probability Theory and Stochastic Processes', url: 'https://drive.google.com/drive/folders/1nn4F9TR-BTheDNf54Pq6-JJom5Gp6hGB?usp=sharing' },
+          ],
+          videos: ['Power System Basics', 'Transmission Fundamentals', 'Distribution Networks'],
+          roadmap: 'Begin with generation concepts, understand transmission, finally distribution systems.'
+        },
+      
+        {
+          name: 'Semester 3-1 SUBJECT NOTES',
+          notes: [
+            { title: 'BEFA ', url: 'https://drive.google.com/drive/folders/120BA9w2OLpMhvKGANuiUiKtAF35Z2IlA?usp=drive_link' },
+            { title: 'Control Systems', url: 'https://drive.google.com/drive/folders/1-5X67cAIOsh9oI71S9ivk92FzzTLWVPu?usp=drive_link' },
+            { title: 'DCN ', url: 'https://drive.google.com/drive/folders/11U_R1HVJbTuRKOka82C5sQT8RhxgDz4S?usp=drive_link' },
+            { title: 'EMI', url: 'https://drive.google.com/drive/folders/104u-oou3krKifUeE3q5Rh1YeL-87Uv86?usp=drive_link' },
+          ],
+          videos: ['Power System Basics', 'Transmission Fundamentals', 'Distribution Networks'],
+          roadmap: 'Begin with generation concepts, understand transmission, finally distribution systems.'
+        },
+        {
+          name: 'Semester 3-2 SUBJECT NOTES',
+          notes: [
+            { title: 'ANALOG ELECTRONICS', url: 'https://drive.google.com/file/d/1AccVzCaISxebdrOljjwCMbaO4Rd_SPrc/view?usp=sharing' },
+            { title: 'LOW POWER VLSI CIRCUITS AND SYSTEMS', url: 'https://drive.google.com/file/d/1EAKsjfRu5dEStaideNy9fuImcsoYOZW4/view?usp=drivesdk' },
+            { title: 'FOME ', url: 'https://drive.google.com/drive/folders/1gQ6F8dpKRSO7TPuhMnk417oN24aFA9U_?usp=drive_link' },
+            { title: 'Embedded Systems Design', url: 'https://drive.google.com/drive/folders/1G77y1t5mGg2J0LlbzReSYBYidz8EcPlT?usp=drive_link' },
+            { title: 'DIGITAL SIGNAL PROCESSING', url: 'https://drive.google.com/drive/folders/1yw4YTZxz2c2FcSFsAabwQruD-LsVZvit?usp=drive_link' },
+            { title: 'AWP', url: 'https://drive.google.com/drive/folders/1O8t3cG5fhrK9cwT2rrqTb2_yK9WJsse6?usp=drive_link' },
+           
+          ],
+          videos: ['Power System Basics', 'Transmission Fundamentals', 'Distribution Networks'],
+          roadmap: 'Begin with generation concepts, understand transmission, finally distribution systems.'
+        },
+        {
+          name: 'Semester 4-1 SUBJECT NOTES',
+          notes: [
+            { title: 'Antennas and Propagation', url: 'https://drive.google.com/file/d/1TfV3Ermh30jx7wg39hYY-3S4ZBHS08ir/view?usp=share_link' },
+            { title: 'Digital Signal Processing', url: 'https://drive.google.com/drive/folders/1yw4YTZxz2c2FcSFsAabwQruD-LsVZvit?usp=sharing' },
+            { title: 'VLSI Design', url: 'https://drive.google.com/file/d/1YS6k7g9LYyazCCfSHvNLGvYtiHcvVN8m/view?usp=share_link' },
+            { title: 'Computer Organization & Operating Systems', url: 'https://www.examupdt.in/p/Download' },
+            { title: 'Electronic Measurements and Instrumentation', url: 'https://www.examupdt.in/p/Download' },
+            { title: 'Object Oriented Programming through Java Embedded System Design', url: 'https://drive.google.com/file/d/1X8raM9aozZn6dLVF8bU67gJH7pc44L7S/view?usp=share_link' },
+          ],
+          videos: ['Power System Basics', 'Transmission Fundamentals', 'Distribution Networks'],
+          roadmap: 'Begin with generation concepts, understand transmission, finally distribution systems.'
+        },
+        {
+          name: 'Semester 4-2 SUBJECT NOTES',
+          notes: [
+            { title: 'Radar Systems', url: 'https://drive.google.com/file/d/1ewV8CY2w31CJKPZ6yTPCdsILjWuigyQP/view?usp=sharing' },
+            { title: 'Low Power VLSI Design', url: 'https://drive.google.com/file/d/1JWnZ9um7Sd9_8S6zFL6nFMdIexhptChd/view?usp=sharing' },
+          ],
+          videos: ['Power System Basics', 'Transmission Fundamentals', 'Distribution Networks'],
+          roadmap: 'Begin with generation concepts, understand transmission, finally distribution systems.'
+        }
+      ]
+    },
+    CSE: {
+      subjects:  [
+        {
+          name: 'Semester 1-1 & 1-2 (COMMON SUBJECTS) SUBJECT NOTES',
+          notes: [
+            { title: 'MATHEMATICS-I', url: 'https://drive.google.com/drive/u/0/folders/1as25YSOvkMvSjjsRUHQiP_gnQK8zPjw9' },
+            { title: 'Engineering Physics', url: 'https://drive.google.com/file/d/1XjbJHvRTcoM9gmywbre-2W2DKwthDKB0/view?usp=drivesdk' },
+            { title: 'Chemistry', url: 'https://drive.google.com/file/d/1XXlLU-QAlM0DX_AvcRHdeonMIyxw_nTV/view?usp=drivesdk' },
+            { title: 'PPS', url: 'https://drive.google.com/file/d/1XfpptZNhhl_hN-oLZ-_gMTx9phv32dOG/view?usp=drivesdk' },
+            { title: 'BEE', url: 'https://drive.google.com/file/d/1_5rzLLCjhMAAUUaXSm0AJQzeDsSfEpsz/view?usp=drivesdk' },
+            { title: 'Maths - II ', url: 'https://drive.google.com/drive/folders/1nfIXg1E5sKDmldR7PerdVOq3UvUQSPHu' },
+            { title: 'Maths - III ', url: 'https://drive.google.com/drive/folders/18sRd9qtwkEvc4Dfssc1Wr3JXrcrntzPv' },
+            { title: 'Applied physics', url: 'https://drive.google.com/file/d/1XrYYeM1RYoRc-UxhfSMlm802KV83JLXh/view?usp=drivesdk' },
+            { title: 'Engineering Mechanics', url: 'https://drive.google.com/file/d/1LkJflaFhpAsDCvv-N1Re4Caahv4mLju9/view?usp=drivesdk' }
+            
+          ],
+          videos: ['Introduction to Circuits', 'Kirchhoff\'s Laws', 'AC Analysis'],
+          roadmap: 'Start with basic circuit concepts, move to network analysis, then advanced topics.'
+        },
+        {
+          name: 'Semester 2-1 SUBJECT NOTES',
+          notes: [
+            { title: 'COA', url: 'https://drive.google.com/open?id=1cPkBLLeTVPsqrI6veaHeI5CZJdZHoCHv' },
+            { title: 'OOP Using C++', url: 'https://drive.google.com/folderview?id=1-C9uNa-dIownVWLTDEt82cxkodRaKfNg' },
+            { title: 'DS', url: 'https://drive.google.com/folderview?id=1bGtESaG142Rn_YmCufabc5nB6Skep0JW' },
+            { title: 'C.O.S.M ', url: 'https://drive.google.com/file/d/1tG1PKAZxcMx40d_uhYlS6QZxOH2LrvPE/view?usp=drivesdk' },
+            { title: 'ADE', url: 'https://drive.google.com/drive/folders/1Qe-Qoy6sgJaNjRRBoObqMSv6vLlPFCI9?usp=sharing' },
+            { title: 'Cyber Security', url: 'https://drive.google.com/drive/folders/1zSWCQXYKga9CYkNs2o9y7zraH1GY1cQw?usp=sharing' }
+          ],
+          videos: ['Power System Basics', 'Transmission Fundamentals', 'Distribution Networks'],
+          roadmap: 'Begin with generation concepts, understand transmission, finally distribution systems.'
+        },
+        {
+          name: 'Semester 2-2 SUBJECT NOTES',
+          notes: [
+            { title: 'BEFA  ', url: 'https://drive.google.com/folderview?id=1qU3Wp6C_5uYKZjNfYOOlZFqkTtD7MgoL' },
+            { title: 'DISCRETE MATHEMATICS ', url: 'https://drive.google.com/drive/u/1/folders/1q4Cj3Fwr7aF9QKbbgINggiAECzhGygUN' },
+            { title: 'DMS ', url: 'https://drive.google.com/folderview?id=1eYUAMA6rFjOF4sWB_ymR1627dg-_WrSw' },
+            { title: 'OPERATING SYSTEMS', url: 'https://drive.google.com/folderview?id=1cpvko0m-lqwiK2XdVr4Uete6DjZlIczt' },
+            { title: 'Java programming', url: 'https://drive.google.com/drive/folders/1TpbAD0xDI2vczzyBP9lv24GoDnQW0beF' }
+          ],
+          videos: ['Power System Basics', 'Transmission Fundamentals', 'Distribution Networks'],
+          roadmap: 'Begin with generation concepts, understand transmission, finally distribution systems.'
+        },
+        {
+          name: 'Semester 3-1 SUBJECT NOTES',
+          notes: [
+            { title: 'ARTIFICIAL INTELLIGENCE', url: 'https://drive.google.com/drive/folders/1ikuCoElTnlu4L91ZEMpQUxMy_e7lGste?usp=sharing' },
+            { title: ' COMPUTER NETWORKS ', url: 'https://drive.google.com/folderview?id=15Lx0xeWSkMpHK7BYy1dXRYF-YpGW8syE' },
+            { title: 'COMPUTER GRAPHICS', url: 'https://drive.google.com/drive/folders/15x9O7oQz2e4h5CoRm0A67Wjfc3rEGsJB?usp=sharing' },
+            { title: 'WEB TECHNOLOGIES', url: 'https://drive.google.com/drive/folders/1yp0lGLmua_YtmN6tb_U8HeOyx2MgLLsR?usp=sharing' },
+            { title: 'IMAGE PROCESSING', url: 'https://drive.google.com/drive/folders/10H-nrdqC3m1THq7tyE6onom2slw3kw92?usp=sharing' },
+            { title: 'SOFTWARE ENGINEERING', url: 'https://drive.google.com/file/d/15K8qpNyCNkS0dNJsXo8CQ15uqavuR7dH/view?usp=share_link' },
+            { title: 'FLAT', url: 'https://drive.google.com/drive/folders/1tLkls29Ewa5ssAONAJNHhreNz08rTIR8?usp=sharing' },
+            { title: 'INFORMATION RETRIEVAL SYSTEMS', url: 'hhttps://drive.google.com/file/d/1dH7BMfkhs1LH65DQsx8DuHx8rzGx-8Xv/view?usp=drivesdk' },
+            { title: 'Distributed Databases', url: 'https://drive.google.com/file/d/16zozm1zGY-8QpR1Io5rUffeyGDahwZk7/view?usp=drivesdk' },
+            { title: 'PPL ', url: 'https://drive.google.com/drive/folders/1b7V6IPgujkoV3tA1dCQD5mQvPlHtjrB8' },
+          ],
+          videos: ['Power System Basics', 'Transmission Fundamentals', 'Distribution Networks'],
+          roadmap: 'Begin with generation concepts, understand transmission, finally distribution systems.'
+        },
+        {
+          name: 'Semester 3-2 SUBJECT NOTES',
+          notes: [
+            { title: 'DAA ', url: 'https://drive.google.com/folderview?id=15IsfdQRBcwQEzEBMJ7EbjOyNHWx35q4P' },
+            { title: 'FUNDAMENTALS OF IOT', url: 'https://drive.google.com/drive/folders/1Fe8moCXngY3xikHU45nmoQLVgCMYGPoR?usp=sharing' },
+            { title: 'COMPILER DESIGN ', url: 'https://drive.google.com/drive/folders/1zG8f9ScW01hjgmKPuMCny9eOcuodbPuQ?usp=sharing' },
+            { title: 'EMACHINE LEARNING', url: 'https://drive.google.com/drive/folders/1mXyHxcfDlSBxXwadLF5W-EiyZvuUGPOM?usp=sharing' },
+            { title: 'Mobile Application Development', url: 'https://drive.google.com/file/d/1oWWWFi6d9IjdKUzE2Xkmt-ppBfIYDNXu/view?usp=drivesdk' },
+            { title: 'Software Testing Methodology', url: 'https://drive.google.com/file/d/1aD8JMxfG1W2lpL5o6MHg2x6oXaY0TWnR/view?usp=drivesdk' }
+          ],
+          videos: ['Power System Basics', 'Transmission Fundamentals', 'Distribution Networks'],
+          roadmap: 'Begin with generation concepts, understand transmission, finally distribution systems.'
+        },
+        {
+          name: 'Semester 4-1 SUBJECT NOTES',
+          notes: [
+            { title: 'DATA MINING', url: 'https://drive.google.com/drive/folders/1nuVnu4sjXXeFGSBdBRa1P0gwT4bYedZy' },
+            { title: 'CLOUD COMPUTING', url: 'https://drive.google.com/drive/folders/1WX9twPGmIUAbGzHAdEqNVb-2RDLOpqMu?usp=sharing' },
+            { title: 'REAL TIME SYSTEMS', url: 'https://drive.google.com/drive/folders/1RYRYge0sbCkz686YbJTpUfHNuAKN0vYq?usp=sharing' },
+            { title: 'ELECTRONIC SENSORS', url: 'https://drive.google.com/drive/folders/1n01CG4mOr998kjRE4fBnOp0qtON7V5ph?usp=sharing' },
+            { title: 'Principles Of Entrepreneurship', url: 'https://drive.google.com/drive/folders/1PgJtKbnLYq0z78_KL8FOijTtbqOslvzQ?usp=sharing' },
+            { title: 'Advance Algorithm', url: 'https://drive.google.com/drive/folders/1StOc32brAVi_3isivIgDUsePn6KhCg3w?usp=sharing' },
+            { title: 'Advance algorithm ( Decode )', url: 'https://drive.google.com/drive/folders/1StOc32brAVi_3isivIgDUsePn6KhCg3w?usp=sharing' },
+          ],
+          videos: ['Power System Basics', 'Transmission Fundamentals', 'Distribution Networks'],
+          roadmap: 'Begin with generation concepts, understand transmission, finally distribution systems.'
+        },
+        {
+          name: 'Semester 4-2 SUBJECT NOTES',
+          notes: [
+            { title: 'Organizational Behaviour', url: 'https://drive.google.com/file/d/1TSqphNXm-oUXJlBWTXOBTm3ZN19ySSbQ/view?usp=drivesdk' },
+            { title: 'Human Computer Interaction', url: 'https://drive.google.com/drive/folders/1XFeaPndgFUFlnnN-fwR2Ss4POEcnnDA5' }
+          ],
+          videos: ['Power System Basics', 'Transmission Fundamentals', 'Distribution Networks'],
+          roadmap: 'Begin with generation concepts, understand transmission, finally distribution systems.'
+        }
+      ]
+    },
+    ME: {
+      subjects: [
+        {
+          name: 'Semester 1-1 & 1-2 (COMMON SUBJECTS) SUBJECT NOTES',
+          notes: [
+            { title: 'MATHEMATICS-I', url: 'https://drive.google.com/drive/u/0/folders/1as25YSOvkMvSjjsRUHQiP_gnQK8zPjw9' },
+            { title: 'Engineering Physics', url: 'https://drive.google.com/file/d/1XjbJHvRTcoM9gmywbre-2W2DKwthDKB0/view?usp=drivesdk' },
+            { title: 'Chemistry', url: 'https://drive.google.com/file/d/1XXlLU-QAlM0DX_AvcRHdeonMIyxw_nTV/view?usp=drivesdk' },
+            { title: 'PPS', url: 'https://drive.google.com/file/d/1XfpptZNhhl_hN-oLZ-_gMTx9phv32dOG/view?usp=drivesdk' },
+            { title: 'BEE', url: 'https://drive.google.com/file/d/1_5rzLLCjhMAAUUaXSm0AJQzeDsSfEpsz/view?usp=drivesdk' },
+            { title: 'Maths - II ', url: 'https://drive.google.com/drive/folders/1nfIXg1E5sKDmldR7PerdVOq3UvUQSPHu' },
+            { title: 'Maths - III ', url: 'https://drive.google.com/drive/folders/18sRd9qtwkEvc4Dfssc1Wr3JXrcrntzPv' },
+            { title: 'Applied physics', url: 'https://drive.google.com/file/d/1XrYYeM1RYoRc-UxhfSMlm802KV83JLXh/view?usp=drivesdk' },
+            { title: 'Engineering Mechanics', url: 'https://drive.google.com/file/d/1LkJflaFhpAsDCvv-N1Re4Caahv4mLju9/view?usp=drivesdk' }
+            
+          ],
+          videos: ['Introduction to Circuits', 'Kirchhoff\'s Laws', 'AC Analysis'],
+          roadmap: 'Start with basic circuit concepts, move to network analysis, then advanced topics.'
+        },
+        {
+          name: 'Semester 2-1 SUBJECT NOTES',
+          notes: [
+            { title: 'Probability and Statistics & Complex Variables ', url: 'https://drive.google.com/drive/folders/1US8j91nxZDALhS0d7J2lQsIWM1iVB7qv?usp=share_link' },
+            { title: 'Mechanics of Solids', url: 'https://drive.google.com/file/d/14ZjZMxpoBtW6cUu-pKrtMHXKmrMEFcsH/view?usp=share_link' },
+            { title: 'Production Technology', url: 'https://drive.google.com/file/d/1xjrIxKoyccMEsfQpLbZ5qwpLSHfJCQcf/view?usp=share_link' },
+            { title: 'Thermodynamics', url: 'https://drive.google.com/file/d/1vODc_gmxl2UOF16Ddk3sZUAPzQ8bmWsV/view?usp=share_link' },
+            { title: 'Fluid Mechanics  ', url: 'https://drive.google.com/file/d/18xwqKA7j9o78EvRe-ZePOPdz1a9LoZiH/view?usp=sharing' },
+            { title: 'Industrial Engineering ', url: 'https://drive.google.com/file/d/1oARy3d_TJeC4DVjEm2k71x6HOJkhMWpQ/view?usp=sharing' },
+            { title: 'Renewable Energy Sources ', url: 'https://drive.google.com/file/d/19JDpeNKD_Em4zgbwfyGjLSrTMsDwKQgy/view?usp=sharing' },
+            { title: 'Operations Research ', url: 'https://drive.google.com/file/d/1JH-kD5ssgTPPoMIqhCNO9jNkUzI5fYx3/view?usp=sharing' },
+            { title: 'Metrology ', url: 'https://drive.google.com/file/d/1j5OKT25FXwIVvPhBIZ5nOrcDlj6YRIka/view?usp=sharing' },
+           
+          ],
+          videos: ['Power System Basics', 'Transmission Fundamentals', 'Distribution Networks'],
+          roadmap: 'Begin with generation concepts, understand transmission, finally distribution systems.'
+        },
+        {
+          name: 'Semester 2-2 SUBJECT NOTES',
+          notes: [
+            { title: 'Basic Electrical Engineering  ', url: 'https://drive.google.com/drive/folders/1rvzjUgCVV68TJAq5mR940kRTFh3s0hGe?usp=sharing' },
+            { title: 'Thermal Engineering 1 ', url: 'https://drive.google.com/drive/folders/1rvzjUgCVV68TJAq5mR940kRTFh3s0hGe?usp=sharing' },
+            { title: 'Kinematics of Machinery ', url: 'https://drive.google.com/drive/folders/1rvzjUgCVV68TJAq5mR940kRTFh3s0hGe?usp=sharing' },
+            { title: 'Instrumentation and Control Systems ', url: 'https://drive.google.com/drive/folders/1rvzjUgCVV68TJAq5mR940kRTFh3s0hGe?usp=sharing' },
+            { title: 'Fluid Mechanics and Hydraulic Machines ', url: 'https://drive.google.com/drive/folders/1rvzjUgCVV68TJAq5mR940kRTFh3s0hGe?usp=sharing' },
+          ],
+          videos: ['Power System Basics', 'Transmission Fundamentals', 'Distribution Networks'],
+          roadmap: 'Begin with generation concepts, understand transmission, finally distribution systems.'
+        },
+        {
+          name: 'Semester 3-1 SUBJECT NOTES',
+          notes: [
+            { title: 'Intellectual Property Rights', url: 'https://drive.google.com/drive/folders/1qlXNpemnw5BBPeR5t0v_XRGROWnWCW8z?usp=drive_link' },
+           
+          ],
+          videos: ['Power System Basics', 'Transmission Fundamentals', 'Distribution Networks'],
+          roadmap: 'Begin with generation concepts, understand transmission, finally distribution systems.'
+        },
+        {
+          name: 'Semester 3-2 SUBJECT NOTES',
+          notes: [
+            { title: 'CAD CAM  ', url: 'https://drive.google.com/drive/folders/1K41C86wCdLi1UC0yuHvO-gUyiuwe1Y-U?usp=sharing' },
+            { title: 'Unconventional Machine Process', url: 'https://drive.google.com/drive/folders/1K41C86wCdLi1UC0yuHvO-gUyiuwe1Y-U?usp=sharing' },
+            { title: 'Design of Machine Members 2 ', url: 'https://drive.google.com/drive/folders/1K41C86wCdLi1UC0yuHvO-gUyiuwe1Y-U?usp=sharing' },
+            { title: 'Heat Transfer', url: 'https://drive.google.com/drive/folders/1K41C86wCdLi1UC0yuHvO-gUyiuwe1Y-U?usp=sharing' },
+            { title: 'Fundamentals of Management', url: 'https://drive.google.com/drive/folders/1K41C86wCdLi1UC0yuHvO-gUyiuwe1Y-U?usp=sharing' },
+            { title: 'Finite Element Methods', url: 'https://drive.google.com/drive/folders/1K41C86wCdLi1UC0yuHvO-gUyiuwe1Y-U?usp=sharing' },
+            { title: 'Renewable Energy Sources  ', url: 'https://drive.google.com/drive/folders/1K41C86wCdLi1UC0yuHvO-gUyiuwe1Y-U?usp=sharing' }
+          ],
+          videos: ['Power System Basics', 'Transmission Fundamentals', 'Distribution Networks'],
+          roadmap: 'Begin with generation concepts, understand transmission, finally distribution systems.'
+        },
+        // {
+        //   name: 'Semester 4-1 SUBJECT NOTES',
+        //   notes: [
+        //     { title: 'DATA MINING', url: 'https://drive.google.com/drive/folders/1nuVnu4sjXXeFGSBdBRa1P0gwT4bYedZy' },
+        //     { title: 'CLOUD COMPUTING', url: 'https://drive.google.com/drive/folders/1WX9twPGmIUAbGzHAdEqNVb-2RDLOpqMu?usp=sharing' },
+        //     { title: 'REAL TIME SYSTEMS', url: 'https://drive.google.com/drive/folders/1RYRYge0sbCkz686YbJTpUfHNuAKN0vYq?usp=sharing' },
+        //     { title: 'ELECTRONIC SENSORS', url: 'https://drive.google.com/drive/folders/1n01CG4mOr998kjRE4fBnOp0qtON7V5ph?usp=sharing' },
+        //     { title: 'Principles Of Entrepreneurship', url: 'https://drive.google.com/drive/folders/1PgJtKbnLYq0z78_KL8FOijTtbqOslvzQ?usp=sharing' },
+        //     { title: 'Advance Algorithm', url: 'https://drive.google.com/drive/folders/1StOc32brAVi_3isivIgDUsePn6KhCg3w?usp=sharing' },
+        //     { title: 'Advance algorithm ( Decode )', url: 'https://drive.google.com/drive/folders/1StOc32brAVi_3isivIgDUsePn6KhCg3w?usp=sharing' },
+        //   ],
+        //   videos: ['Power System Basics', 'Transmission Fundamentals', 'Distribution Networks'],
+        //   roadmap: 'Begin with generation concepts, understand transmission, finally distribution systems.'
+        // },
+        // {
+        //   name: 'Semester 4-2 SUBJECT NOTES',
+        //   notes: [
+        //     { title: 'Organizational Behaviour', url: 'https://drive.google.com/file/d/1TSqphNXm-oUXJlBWTXOBTm3ZN19ySSbQ/view?usp=drivesdk' },
+        //     { title: 'Human Computer Interaction', url: 'https://drive.google.com/drive/folders/1XFeaPndgFUFlnnN-fwR2Ss4POEcnnDA5' }
+        //   ],
+        //   videos: ['Power System Basics', 'Transmission Fundamentals', 'Distribution Networks'],
+        //   roadmap: 'Begin with generation concepts, understand transmission, finally distribution systems.'
+        // }
+      ]
+    },
+    Civil: {
+      subjects:  [
+        {
+          name: 'Semester 1-1 & 1-2 (COMMON SUBJECTS) SUBJECT NOTES',
+          notes: [
+            { title: 'MATHEMATICS-I', url: 'https://drive.google.com/drive/u/0/folders/1as25YSOvkMvSjjsRUHQiP_gnQK8zPjw9' },
+            { title: 'Engineering Physics', url: 'https://drive.google.com/file/d/1XjbJHvRTcoM9gmywbre-2W2DKwthDKB0/view?usp=drivesdk' },
+            { title: 'Chemistry', url: 'https://drive.google.com/file/d/1XXlLU-QAlM0DX_AvcRHdeonMIyxw_nTV/view?usp=drivesdk' },
+            { title: 'PPS', url: 'https://drive.google.com/file/d/1XfpptZNhhl_hN-oLZ-_gMTx9phv32dOG/view?usp=drivesdk' },
+            { title: 'BEE', url: 'https://drive.google.com/file/d/1_5rzLLCjhMAAUUaXSm0AJQzeDsSfEpsz/view?usp=drivesdk' },
+            { title: 'Maths - II ', url: 'https://drive.google.com/drive/folders/1nfIXg1E5sKDmldR7PerdVOq3UvUQSPHu' },
+            { title: 'Maths - III ', url: 'https://drive.google.com/drive/folders/18sRd9qtwkEvc4Dfssc1Wr3JXrcrntzPv' },
+            { title: 'Applied physics', url: 'https://drive.google.com/file/d/1XrYYeM1RYoRc-UxhfSMlm802KV83JLXh/view?usp=drivesdk' },
+            { title: 'Engineering Mechanics', url: 'https://drive.google.com/file/d/1LkJflaFhpAsDCvv-N1Re4Caahv4mLju9/view?usp=drivesdk' }
+            
+          ],
+          videos: ['Introduction to Circuits', 'Kirchhoff\'s Laws', 'AC Analysis'],
+          roadmap: 'Start with basic circuit concepts, move to network analysis, then advanced topics.'
+        },
+        {
+          name: 'Semester 2-1 SUBJECT NOTES',
+          notes: [
+            { title: 'Fluid Mechanics', url: 'https://drive.google.com/drive/folders/1VA2sqKtAgp46sY_Av11OlxPh1azgbqCo' },
+            { title: 'Engineering Geology  ', url: 'https://drive.google.com/drive/folders/1VA2sqKtAgp46sY_Av11OlxPh1azgbqCo' },
+            { title: 'PROBABILITY AND STATISTICS ', url: 'https://drive.google.com/drive/folders/10d6AM4ykSbftToT7hagY7GjMklHU2Djc?usp=sharing' },
+            { title: 'Strength of Materials - I ', url: 'https://drive.google.com/file/d/1CUMgSGef7tj8ZtksSDPpyHpSPjf27uRf/view?usp=sharing' },
+            { title: 'Fluid Mechanics', url: 'https://drive.google.com/drive/folders/1Qe-Qoy6sgJaNjRRBoObqMSv6vLlPFCI9?usp=sharing' },
+            { title: 'Building Materials and Construction', url: 'https://drive.google.com/drive/folders/1VA2sqKtAgp46sY_Av11OlxPh1azgbqCo' },
+            { title: 'Basic Surveying', url: 'https://drive.google.com/drive/folders/1VA2sqKtAgp46sY_Av11OlxPh1azgbqCo' },
+          ],
+          videos: ['Power System Basics', 'Transmission Fundamentals', 'Distribution Networks'],
+          roadmap: 'Begin with generation concepts, understand transmission, finally distribution systems.'
+        },
+        {
+          name: 'Semester 2-2 SUBJECT NOTES',
+          notes: [
+            { title: 'TRANSFORM CALCULUS, FOURIER SERIES AND NUMERICAL TECHNIQUES  ', url: 'https://drive.google.com/drive/folders/1h44JgLffHaV4YKpzbZ7kGbXtW3azkmXy' },
+            { title: 'Steel Structures ', url: 'https://drive.google.com/drive/folders/1xpKENmrjBLfSolf_KimMsxT1ucV2o7gX' },
+            { title: 'Environmental engineering ', url: 'https://drive.google.com/drive/folders/1xpKENmrjBLfSolf_KimMsxT1ucV2o7gX' },
+          ],
+          videos: ['Power System Basics', 'Transmission Fundamentals', 'Distribution Networks'],
+          roadmap: 'Begin with generation concepts, understand transmission, finally distribution systems.'
+        },
+        {
+          name: 'Semester 3-1 SUBJECT NOTES',
+          notes: [
+            { title: 'Foundation Engineering ', url: 'https://drive.google.com/drive/folders/1xpKENmrjBLfSolf_KimMsxT1ucV2o7gX' },
+            { title: ' Hydrology and water resource Engineering ', url: 'https://drive.google.com/drive/folders/1xpKENmrjBLfSolf_KimMsxT1ucV2o7gX' },
+            { title: 'Pre Stressed Concrete', url: 'https://drive.google.com/drive/folders/1xpKENmrjBLfSolf_KimMsxT1ucV2o7gX' },
+            { title: 'Environmental Engineering', url: 'https://drive.google.com/drive/folders/17YnbvdLdo-BxZnmoQS_SnqCu39ezBXYy' },
+           
+          ],
+          videos: ['Power System Basics', 'Transmission Fundamentals', 'Distribution Networks'],
+          roadmap: 'Begin with generation concepts, understand transmission, finally distribution systems.'
+        },
+        {
+          name: 'Semester 3-2 SUBJECT NOTES',
+          notes: [
+            { title: 'Foundation Engineering  ', url: 'https://drive.google.com/drive/folders/17YnbvdLdo-BxZnmoQS_SnqCu39ezBXYy' },
+            { title: 'Design Of Steel Structures', url: 'https://drive.google.com/drive/folders/17YnbvdLdo-BxZnmoQS_SnqCu39ezBXYy' },
+            { title: 'NCES', url: 'https://drive.google.com/file/d/1M9PY-QIjerUYXtBG3bil1rb-KppReOxq/view?usp=sharing' },
+            { title: 'Environmental Science ', url: 'https://drive.google.com/drive/folders/17YnbvdLdo-BxZnmoQS_SnqCu39ezBXYy' },
+           
+          ],
+          videos: ['Power System Basics', 'Transmission Fundamentals', 'Distribution Networks'],
+          roadmap: 'Begin with generation concepts, understand transmission, finally distribution systems.'
+        },
+        {
+          name: 'Semester 4-1 SUBJECT NOTES',
+          notes: [
+            { title: 'Air pollution', url: 'https://drive.google.com/file/d/1geuIJzQ0h-1F_0FkC-vkgSt_rdJa6ihP/view?usp=drive_link' },
+            { title: 'Solid And Waste Management', url: 'https://drive.google.com/drive/folders/1JuhDilJ7MR4SBqei1jGKMuLsiCn8phHO?usp=drive_link' }
+            
+          ],
+          videos: ['Power System Basics', 'Transmission Fundamentals', 'Distribution Networks'],
+          roadmap: 'Begin with generation concepts, understand transmission, finally distribution systems.'
+        },
+        {
+          name: 'Semester 4-2 SUBJECT NOTES',
+          notes: [
+            
+          ],
+          videos: ['Power System Basics', 'Transmission Fundamentals', 'Distribution Networks'],
+          roadmap: 'Begin with generation concepts, understand transmission, finally distribution systems.'
+        }
+      ]
+    },
+    B_PHARMACY: {
+      subjects:  [
+        {
+          name: 'Semester 1-1 & 1-2 (COMMON SUBJECTS) SUBJECT NOTES',
+          notes: [
+            { title: 'Human Anatomy and Physiology I', url: 'https://drive.google.com/drive/folders/1dzP7-Q6CLF2yd_rqhNCcPvLuekf4qMH0?usp=sharing' },
+            { title: 'Pharmaceutical Analysis I', url: 'https://drive.google.com/drive/folders/1dzP7-Q6CLF2yd_rqhNCcPvLuekf4qMH0?usp=sharing' },
+            { title: 'Pharmaceutical Inorganic Chemistry I', url: 'https://drive.google.com/drive/folders/1dzP7-Q6CLF2yd_rqhNCcPvLuekf4qMH0?usp=sharing' },
+            { title: 'Human Anatomy and Physiology II', url: 'https://drive.google.com/drive/folders/1dzP7-Q6CLF2yd_rqhNCcPvLuekf4qMH0?usp=sharing' },
+            { title: 'Pathophysiology', url: 'https://drive.google.com/drive/folders/1X0B61luBSDWf8NLQpJjdrgq3QN--XxnF?usp=sharing' },
+            { title: 'Biochemistry', url: 'https://drive.google.com/drive/folders/1X0B61luBSDWf8NLQpJjdrgq3QN--XxnF?usp=sharing' },
+            { title: 'Pharmaceutical Organic Chemistry I ', url: 'https://drive.google.com/drive/folders/1X0B61luBSDWf8NLQpJjdrgq3QN--XxnF?usp=sharing' },
+            { title: 'Computer Application in Pharmacy', url: 'https://drive.google.com/drive/folders/1X0B61luBSDWf8NLQpJjdrgq3QN--XxnF?usp=sharing' },
+            
+          ],
+          videos: ['Introduction to Circuits', 'Kirchhoff\'s Laws', 'AC Analysis'],
+          roadmap: 'Start with basic circuit concepts, move to network analysis, then advanced topics.'
+        },
+        {
+          name: 'Semester 2-1 SUBJECT NOTES',
+          notes: [
+            { title: 'Pharmaceutical Organic Chemistry II', url: 'https://drive.google.com/drive/folders/19FEmJfw_2Tw_TcMd1XiZyuTOAdzi2Gf2?usp=sharing' },
+            { title: 'Physical Pharmaceutics-I  ', url: 'https://drive.google.com/drive/folders/1XaFUTJmMM6QjeN5_Yl6-nNBElc4-V1Lt?usp=sharing' },
+            { title: 'Pharmaceutical Microbiology ', url: 'https://drive.google.com/drive/folders/1XaFUTJmMM6QjeN5_Yl6-nNBElc4-V1Lt?usp=sharing' },
+            { title: 'Pharmaceutical Engineering ', url: 'https://drive.google.com/drive/folders/1XaFUTJmMM6QjeN5_Yl6-nNBElc4-V1Lt?usp=sharing' },
+           
+          ],
+          videos: ['Power System Basics', 'Transmission Fundamentals', 'Distribution Networks'],
+          roadmap: 'Begin with generation concepts, understand transmission, finally distribution systems.'
+        },
+        {
+          name: 'Semester 2-2 SUBJECT NOTES',
+          notes: [
+            { title: 'Medicinal Chemistry- I  ', url: 'https://drive.google.com/drive/folders/1h44JgLffHaV4YKpzbZ7kGbXtW3azkmXy' },
+            { title: '	Pharmaceutical Organic Chemistry-III ', url: 'https://drive.google.com/drive/folders/1xpKENmrjBLfSolf_KimMsxT1ucV2o7gX' },
+            { title: 'Pharmacognosy and Phytochemistry-I ', url: 'https://drive.google.com/drive/folders/1xpKENmrjBLfSolf_KimMsxT1ucV2o7gX' },
+            { title: '	Pharmacology-I ', url: 'https://drive.google.com/drive/folders/1xpKENmrjBLfSolf_KimMsxT1ucV2o7gX' },
+            { title: '	Physical Pharmaceutics-II ', url: 'https://drive.google.com/drive/folders/1xpKENmrjBLfSolf_KimMsxT1ucV2o7gX' },
+          ],
+          videos: ['Power System Basics', 'Transmission Fundamentals', 'Distribution Networks'],
+          roadmap: 'Begin with generation concepts, understand transmission, finally distribution systems.'
+        },
+        {
+          name: 'Semester 3-1 SUBJECT NOTES',
+          notes: [
+            { title: '	Industrial Pharmacy - I', url: 'https://drive.google.com/drive/folders/17M-Mdylb2Tkj_WSvhdg5Pvux8W1tAahW?usp=sharing' },
+            { title: ' 	Medicinal Chemistry II', url: 'https://drive.google.com/drive/folders/17M-Mdylb2Tkj_WSvhdg5Pvux8W1tAahW?usp=sharing' },
+            { title: 'Pharmacognosy and Phytochemistry - II', url: 'https://drive.google.com/drive/folders/17M-Mdylb2Tkj_WSvhdg5Pvux8W1tAahW?usp=sharing' },
+            { title: '	Pharmacology II', url: 'https://drive.google.com/drive/folders/17M-Mdylb2Tkj_WSvhdg5Pvux8W1tAahW?usp=sharing' },
+           
+          ],
+          videos: ['Power System Basics', 'Transmission Fundamentals', 'Distribution Networks'],
+          roadmap: 'Begin with generation concepts, understand transmission, finally distribution systems.'
+        },
+        {
+          name: 'Semester 3-2 SUBJECT NOTES',
+          notes: [
+            { title: '	Biopharmaceutics and Pharmacokinetics  ', url: 'https://drive.google.com/drive/folders/1d_5k0-oAC_K6Gylmu-MtSo88XQUPzAQz?usp=sharing' },
+            { title: 'Herbal Drug Technology', url: 'https://drive.google.com/drive/folders/1d_5k0-oAC_K6Gylmu-MtSo88XQUPzAQz?usp=sharing' },
+            { title: 'Medicinal Chemistry III', url: 'https://drive.google.com/drive/folders/1d_5k0-oAC_K6Gylmu-MtSo88XQUPzAQz?usp=sharing' },
+            { title: 'Pharmaceutical Biotechnology ', url: 'https://drive.google.com/drive/folders/1d_5k0-oAC_K6Gylmu-MtSo88XQUPzAQz?usp=sharing' },
+            { title: 'PPharmaceutical Quality Assurance ', url: 'https://drive.google.com/drive/folders/1d_5k0-oAC_K6Gylmu-MtSo88XQUPzAQz?usp=sharing' },
+            { title: 'Pharmacology  III ', url: 'https://drive.google.com/drive/folders/1d_5k0-oAC_K6Gylmu-MtSo88XQUPzAQz?usp=sharing' },
+           
+          ],
+          videos: ['Power System Basics', 'Transmission Fundamentals', 'Distribution Networks'],
+          roadmap: 'Begin with generation concepts, understand transmission, finally distribution systems.'
+        },
+        {
+          name: 'Semester 4-1 SUBJECT NOTES',
+          notes: [
+            { title: 'Industrial Pharmacy II', url: 'https://drive.google.com/drive/folders/1nQ8cNNOhQHd0zYnagIIM04Oz9vEBkn4l?usp=sharing' },
+            { title: 'Instrument Method Analysis', url: 'https://drive.google.com/drive/folders/1nQ8cNNOhQHd0zYnagIIM04Oz9vEBkn4l?usp=sharing' },
+            { title: '	Novel Drug Delivery Systems', url: 'https://drive.google.com/drive/folders/1nQ8cNNOhQHd0zYnagIIM04Oz9vEBkn4l?usp=sharing' },
+            { title: '	Pharmacy Practice', url: 'https://drive.google.com/drive/folders/1nQ8cNNOhQHd0zYnagIIM04Oz9vEBkn4l?usp=sharing' },
+            
+          ],
+          videos: ['Power System Basics', 'Transmission Fundamentals', 'Distribution Networks'],
+          roadmap: 'Begin with generation concepts, understand transmission, finally distribution systems.'
+        },
+        {
+          name: 'Semester 4-2 SUBJECT NOTES',
+          notes: [
+            { title: '	Bio statistics and Research Methodology', url: 'https://drive.google.com/drive/folders/19E-juk8CSo65gbo9inM0IDe-bRW3QHTq?usp=sharing' },
+            { title: '	Nano technology', url: 'https://drive.google.com/drive/folders/19E-juk8CSo65gbo9inM0IDe-bRW3QHTq?usp=sharing' },
+            { title: '	Social and Preventive Pharmacy', url: 'https://drive.google.com/drive/folders/19E-juk8CSo65gbo9inM0IDe-bRW3QHTq?usp=sharing' },
+            { title: 'Pharmaceutical Jurisprudence', url: 'https://drive.google.com/drive/folders/19E-juk8CSo65gbo9inM0IDe-bRW3QHTq?usp=sharing' },
+            
+          ],
+          videos: ['Power System Basics', 'Transmission Fundamentals', 'Distribution Networks'],
+          roadmap: 'Begin with generation concepts, understand transmission, finally distribution systems.'
+        }
+      ]
+    },
+    MBA: {
+      subjects:  [
+        {
+          name: 'ALL- SUBJECT NOTES OF MBA',
+          notes: [
+            { title: 'Business Economics RMSA', url: 'https://drive.google.com/file/d/13uLYnR2kRtzLpfjQfuEQDNXDip1vzWrt/view' },
+            { title: 'Investment Management', url: 'https://drive.google.com/file/d/1Atpy5qtPmn6UR4JAiq8Yy_DbHVBwNP3i/view?usp=sharing' },
+            { title: 'Cross Culture Management', url: 'https://drive.google.com/file/d/1B44sWnIxMiVuFlP5au0K7lhqHJIOS6mH/view?usp=sharing' },
+            { title: 'Financial Reporting and Analysis', url: 'https://drive.google.com/file/d/15teHf7H3DGiOYrN7yI9Axa6AQh-n0fvk/view?usp=sharing' },
+            { title: 'Talent and Knowledge Management', url: 'https://drive.google.com/file/d/1sRk6nWdy34VHCZWzlNCi2Ix1lbJT6KMb/view?usp=sharing' },
+            { title: 'International Human Resource', url: 'https://drive.google.com/file/d/1ET9koFwLifl9DMH482QnP5PXlwFmMs3R/view?usp=sharing' },
+            { title: 'Financial Management', url: 'https://drive.google.com/file/d/116axIgJfXa0vuKMxqZZFcGiGWPJ4snyl/view?usp=sharing' },
+            
+          ],
+          videos: ['Introduction to Circuits', 'Kirchhoff\'s Laws', 'AC Analysis'],
+          roadmap: 'Start with basic circuit concepts, move to network analysis, then advanced topics.'
+        },
+      ]
     }
     
-    // Create a new assignment
-    const newAssignment = {
-      id: `a${Date.now()}`,
-      name: assignmentName,
-      description: assignmentDescription,
-      dueDate: assignmentDueDate,
-      dateAdded: new Date().toISOString(),
-    };
-    
-    // Update courses array with the new assignment
-    const updatedCourses = courses.map(course => {
-      if (course.id === selectedCourse.id) {
-        return {
-          ...course,
-          assignments: [...(course.assignments || []), newAssignment],
-          dueAssignments: (course.dueAssignments || 0) + 1,
-        };
-      }
-      return course;
-    });
-    
-    setCourses(updatedCourses);
-    
-    // Reset form fields
-    setAssignmentName("");
-    setAssignmentDescription("");
-    setAssignmentDueDate("");
-    
-    toast({
-      title: "Assignment added successfully",
-      description: `"${assignmentName}" has been added to ${selectedCourse.title}`,
-    });
-    
-    setIsDialogOpen(false);
-  };
-  
-  const handleViewCourse = (course) => {
-    // In a real application, this would navigate to a course detail page
-    toast({
-      title: "Course selected",
-      description: `You are now viewing "${course.title}"`,
-    });
   };
 
   return (
-    <div className="flex flex-col min-h-screen">
-      <Navbar userRole={userRole} />
+    <Container fluid className="py-4">
+      <h1 className="text-center mb-4">Engineering Learning Hub</h1>
       
-      <main className="flex-1 container max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
-          <div>
-            <h1 className="text-3xl font-bold flex items-center">
-              <BookOpen className="mr-3 h-8 w-8 text-primary" />
-              Courses
-            </h1>
-            <p className="text-muted-foreground mt-1">
-              {userRole === "faculty" 
-                ? "Manage your courses and academic materials" 
-                : "Browse and manage your academic courses"}
-            </p>
-          </div>
+      <Tab.Container activeKey={key} onSelect={(k) => setKey(k)}>
+        <Row>
+          <Col sm={3}>
+            <Nav variant="pills" className="flex-column">
+              {Object.keys(courses).map((branch) => (
+                <Nav.Item key={branch}>
+                  <Nav.Link eventKey={branch} className="mb-2">
+                    {branch}
+                  </Nav.Link>
+                </Nav.Item>
+              ))}
+            </Nav>
+          </Col>
           
-          <div className="w-full md:w-auto flex gap-2">
-            <div className="relative w-full md:w-64">
-              <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-              <Input
-                type="search"
-                placeholder="Search courses..."
-                className="pl-8"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-              />
-            </div>
-            
-            <Button
-              variant="outline"
-              size="icon"
-              onClick={() => setShowFilters(!showFilters)}
-              className={showFilters ? "bg-muted" : ""}
-            >
-              <Filter className="h-4 w-4" />
-            </Button>
-            
-            {userRole === "faculty" && (
-              <Button className="whitespace-nowrap">
-                Create Course
-              </Button>
-            )}
-          </div>
-        </div>
-        
-        <Tabs defaultValue="enrolled" value={activeTab} onValueChange={setActiveTab} className="mb-6">
-          <TabsList>
-            {userRole === "student" ? (
-              <>
-                <TabsTrigger value="enrolled">Enrolled Courses</TabsTrigger>
-                <TabsTrigger value="available">Available Courses</TabsTrigger>
-              </>
-            ) : (
-              <>
-                <TabsTrigger value="enrolled">My Courses</TabsTrigger>
-                <TabsTrigger value="available">All Courses</TabsTrigger>
-              </>
-            )}
-          </TabsList>
-        </Tabs>
-        
-        {showFilters && (
-          <div className="bg-muted p-4 rounded-lg mb-6 animate-fade-in">
-            <div className="flex flex-col sm:flex-row gap-4">
-              <div className="flex-1">
-                <label className="text-sm font-medium mb-2 block">Category</label>
-                <Select value={categoryFilter} onValueChange={setCategoryFilter}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select a category" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {categories.map((category) => (
-                      <SelectItem key={category} value={category}>
-                        {category === "all" 
-                          ? "All Categories" 
-                          : category.charAt(0).toUpperCase() + category.slice(1)}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-              
-              <div className="flex-1">
-                <label className="text-sm font-medium mb-2 block">Sort By</label>
-                <Select defaultValue="relevance">
-                  <SelectTrigger>
-                    <SelectValue placeholder="Sort by..." />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="relevance">Most Relevant</SelectItem>
-                    <SelectItem value="recent">Recently Added</SelectItem>
-                    <SelectItem value="az">A-Z</SelectItem>
-                    <SelectItem value="za">Z-A</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              
-              <Button className="self-end" variant="secondary" onClick={() => {
-                setSearchTerm("");
-                setCategoryFilter("all");
-              }}>
-                Reset Filters
-              </Button>
-            </div>
-          </div>
-        )}
-        
-        <TabsContent value="enrolled" className="m-0">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {sortedCourses.length > 0 ? (
-              sortedCourses.map((course) => (
-                <div key={course.id} className="relative">
-                  <CourseCard 
-                    {...course} 
-                    onClick={() => handleViewCourse(course)} 
-                  />
+          <Col sm={9}>
+            <Tab.Content>
+              {Object.entries(courses).map(([branch, data]) => (
+                <Tab.Pane key={branch} eventKey={branch}>
+                  <h2 className="mb-4">{branch} Engineering</h2>
                   
-                  {userRole === "faculty" && (
-                    <div className="absolute top-2 right-2 flex gap-1">
-                      <Dialog open={isDialogOpen && selectedCourse?.id === course.id} onOpenChange={(open) => {
-                        setIsDialogOpen(open);
-                        if (!open) setSelectedCourse(null);
-                      }}>
-                        <DialogTrigger asChild>
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            className="rounded-full bg-white/80 hover:bg-white shadow-sm"
-                            onClick={() => setSelectedCourse(course)}
-                          >
-                            <Upload className="h-4 w-4" />
-                          </Button>
-                        </DialogTrigger>
-                        <DialogContent>
-                          <DialogHeader>
-                            <DialogTitle>Add Content to {course.title}</DialogTitle>
-                            <DialogDescription>
-                              Upload course materials or create assignments for your students.
-                            </DialogDescription>
-                          </DialogHeader>
+                  {data.subjects.map((subject, index) => (
+                    <Card key={index} className="mb-4">
+                      <Card.Header className="bg-primary text-white">
+                        <h3 className="mb-0">{subject.name}</h3>
+                      </Card.Header>
+                      
+                      <Card.Body>
+                        <Accordion>
+                          <Accordion.Item eventKey="0">
+                            <Accordion.Header>Digital Notes & PDFs</Accordion.Header>
+                            <Accordion.Body>
+                              <ul>
+                                {subject.notes.map((note, i) => (
+                                  <li key={i}>
+                                    {note.title}
+                                    <Button 
+                                      variant="link" 
+                                      className="ms-2"
+                                      href={note.url}
+                                      target="_blank"
+                                      rel="noopener noreferrer"
+                                    >
+                                      Download PDF
+                                    </Button>
+                                  </li>
+                                ))}
+                              </ul>
+                            </Accordion.Body>
+                          </Accordion.Item>
                           
-                          <Tabs defaultValue="material">
-                            <TabsList className="grid w-full grid-cols-2">
-                              <TabsTrigger value="material">Course Material</TabsTrigger>
-                              <TabsTrigger value="assignment">Assignment</TabsTrigger>
-                            </TabsList>
-                            
-                            <TabsContent value="material" className="space-y-4 pt-4">
-                              <div className="space-y-2">
-                                <Label htmlFor="material-name">Material Name</Label>
-                                <Input
-                                  id="material-name"
-                                  placeholder="e.g., Week 1 Lecture Notes"
-                                  value={materialName}
-                                  onChange={(e) => setMaterialName(e.target.value)}
-                                />
-                              </div>
-                              
-                              <div className="space-y-2">
-                                <Label htmlFor="material-desc">Description (Optional)</Label>
-                                <Textarea
-                                  id="material-desc"
-                                  placeholder="Brief description of this material"
-                                  value={materialDescription}
-                                  onChange={(e) => setMaterialDescription(e.target.value)}
-                                />
-                              </div>
-                              
-                              <div className="space-y-2">
-                                <Label htmlFor="material-file">Upload File</Label>
-                                <Input
-                                  id="material-file"
-                                  type="file"
-                                  accept=".pdf,.doc,.docx,.ppt,.pptx"
-                                />
-                                <p className="text-xs text-muted-foreground">
-                                  Supported formats: PDF, Word, PowerPoint (Max 50MB)
-                                </p>
-                              </div>
-                              
-                              <DialogFooter>
-                                <Button variant="outline" onClick={() => setIsDialogOpen(false)}>
-                                  Cancel
-                                </Button>
-                                <Button onClick={handleAddMaterial}>
-                                  Upload Material
-                                </Button>
-                              </DialogFooter>
-                            </TabsContent>
-                            
-                            <TabsContent value="assignment" className="space-y-4 pt-4">
-                              <div className="space-y-2">
-                                <Label htmlFor="assignment-name">Assignment Name</Label>
-                                <Input
-                                  id="assignment-name"
-                                  placeholder="e.g., Homework 1"
-                                  value={assignmentName}
-                                  onChange={(e) => setAssignmentName(e.target.value)}
-                                />
-                              </div>
-                              
-                              <div className="space-y-2">
-                                <Label htmlFor="assignment-desc">Description</Label>
-                                <Textarea
-                                  id="assignment-desc"
-                                  placeholder="Instructions for this assignment"
-                                  value={assignmentDescription}
-                                  onChange={(e) => setAssignmentDescription(e.target.value)}
-                                />
-                              </div>
-                              
-                              <div className="space-y-2">
-                                <Label htmlFor="assignment-due">Due Date</Label>
-                                <Input
-                                  id="assignment-due"
-                                  type="datetime-local"
-                                  value={assignmentDueDate}
-                                  onChange={(e) => setAssignmentDueDate(e.target.value)}
-                                />
-                              </div>
-                              
-                              <div className="space-y-2">
-                                <Label htmlFor="assignment-file">Upload Instructions (Optional)</Label>
-                                <Input
-                                  id="assignment-file"
-                                  type="file"
-                                  accept=".pdf,.doc,.docx"
-                                />
-                              </div>
-                              
-                              <DialogFooter>
-                                <Button variant="outline" onClick={() => setIsDialogOpen(false)}>
-                                  Cancel
-                                </Button>
-                                <Button onClick={handleAddAssignment}>
-                                  Create Assignment
-                                </Button>
-                              </DialogFooter>
-                            </TabsContent>
-                          </Tabs>
-                        </DialogContent>
-                      </Dialog>
-                    </div>
-                  )}
-                </div>
-              ))
-            ) : (
-              <div className="col-span-full text-center p-12 bg-muted rounded-lg">
-                <BookOpen className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
-                <h3 className="text-lg font-medium">No courses found</h3>
-                <p className="text-muted-foreground mt-1">
-                  Try adjusting your search or filters to find what you're looking for.
-                </p>
-              </div>
-            )}
-          </div>
-        </TabsContent>
-        
-        <TabsContent value="available" className="m-0">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {sortedCourses.length > 0 ? (
-              sortedCourses.map((course) => (
-                <CourseCard key={course.id} {...course} />
-              ))
-            ) : (
-              <div className="col-span-full text-center p-12 bg-muted rounded-lg">
-                <BookOpen className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
-                <h3 className="text-lg font-medium">No available courses found</h3>
-                <p className="text-muted-foreground mt-1">
-                  Check back later for new course offerings or adjust your filters.
-                </p>
-              </div>
-            )}
-          </div>
-        </TabsContent>
-      </main>
-      
-      <Footer />
-    </div>
+                          <Accordion.Item eventKey="1">
+                            {/* <Accordion.Header>Video Lectures</Accordion.Header> */}
+                            <Accordion.Body>
+                              <ul>
+                                {subject.videos.map((video, i) => (
+                                  <li key={i}>
+                                    {video}
+                                    <Button variant="link" className="ms-2">Watch Video</Button>
+                                  </li>
+                                ))}
+                              </ul>
+                            </Accordion.Body>
+                          </Accordion.Item>
+                          
+                          <Accordion.Item eventKey="2">
+                            {/* <Accordion.Header>Learning Roadmap</Accordion.Header> */}
+                            <Accordion.Body>
+                              <p>{subject.roadmap}</p>
+                            </Accordion.Body>
+                          </Accordion.Item>
+                        </Accordion>
+                      </Card.Body>
+                    </Card>
+                  ))}
+                </Tab.Pane>
+              ))}
+            </Tab.Content>
+          </Col>
+        </Row>
+      </Tab.Container>
+    </Container>
   );
 };
 
-export default Courses;
+export default LearningHub;

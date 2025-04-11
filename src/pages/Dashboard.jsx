@@ -53,7 +53,7 @@ const Dashboard = () => {
   // Role switcher for demo purposes (would not exist in real app)
   const RoleSwitcher = () => (
     <div className="flex justify-center mb-6 p-4 bg-muted rounded-lg">
-      <div className="text-sm text-muted-foreground mr-3 my-auto">Demo Role Switcher:</div>
+      <div className="text-sm text-muted-foreground mr-3 my-auto"></div>
       <div className="flex space-x-2">
         <button
           onClick={() => setUserRole("student")}
@@ -63,7 +63,7 @@ const Dashboard = () => {
               : "bg-secondary hover:bg-muted"
           }`}
         >
-          Student
+          {/* Student */}
         </button>
         <button
           onClick={() => setUserRole("faculty")}
@@ -73,7 +73,7 @@ const Dashboard = () => {
               : "bg-secondary hover:bg-muted"
           }`}
         >
-          Faculty
+          {/* Faculty */}
         </button>
         <button
           onClick={() => setUserRole("admin")}
@@ -83,7 +83,7 @@ const Dashboard = () => {
               : "bg-secondary hover:bg-muted"
           }`}
         >
-          Admin
+          {/* Admin */}
         </button>
       </div>
     </div>
