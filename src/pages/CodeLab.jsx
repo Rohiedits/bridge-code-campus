@@ -64,7 +64,15 @@ const CodeLab = () => {
   };
 
   const handleSelectProblem = (problem) => {
-    setCurrentProblem(problem);
+    // Convert difficulty to expected format if needed
+    const typeSafeProblem = {
+      ...problem,
+      difficulty: problem.difficulty === "easy" ? "easy" : 
+                  problem.difficulty === "medium" ? "medium" : 
+                  problem.difficulty === "hard" ? "hard" : "easy"
+    };
+    
+    setCurrentProblem(typeSafeProblem);
     setActiveTab("solve");
     setCode(`// ${problem.title}\n// ${problem.description}\n\nfunction solve(input) {\n  // Your code here\n  \n}\n`);
   };
