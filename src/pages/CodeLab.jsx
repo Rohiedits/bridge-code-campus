@@ -1,415 +1,386 @@
+
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import CodeEditor from "@/components/CodeEditor/CodeEditor";
-import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Separator } from "@/components/ui/separator";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { CheckCircle, ChevronRight, Code, FileEdit, Filter, Info, Search, Star, TrendingUp, User } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
-
-// Mock problem data
-const problemData = {
-  title: "Two Sum",
-  description: "Given an array of integers nums and an integer target, return indices of the two numbers such that they add up to target.\n\nYou may assume that each input would have exactly one solution, and you may not use the same element twice.\n\nYou can return the answer in any order.",
-  constraints: "• 2 <= nums.length <= 10^4\n• -10^9 <= nums[i] <= 10^9\n• -10^9 <= target <= 10^9\n• Only one valid answer exists.",
-  examples: [
-    {
-      input: "nums = [2,7,11,15], target = 9",
-      output: "[0,1]",
-      explanation: "Because nums[0] + nums[1] == 9, we return [0, 1]."
-    },
-    {
-      input: "nums = [3,2,4], target = 6",
-      output: "[1,2]"
-    },
-    {
-      input: "nums = [3,3], target = 6",
-      output: "[0,1]"
-    }
-  ],
-  difficulty: "easy",
-  timeLimit: "500ms",
-};
-
-// Mock problems list
-const problems = [
-  { 
-    id: "1", 
-    title: "Two Sum", 
-    difficulty: "easy", 
-    category: "arrays", 
-    solved: true 
-  },
-  { 
-    id: "2", 
-    title: "Valid Parentheses", 
-    difficulty: "easy", 
-    category: "stacks", 
-    solved: false 
-  },
-  { 
-    id: "3", 
-    title: "Reverse Linked List", 
-    difficulty: "easy", 
-    category: "linked lists", 
-    solved: true 
-  },
-  { 
-    id: "4", 
-    title: "Binary Tree Inorder Traversal", 
-    difficulty: "medium", 
-    category: "trees", 
-    solved: false 
-  },
-  { 
-    id: "5", 
-    title: "Merge Two Sorted Lists", 
-    difficulty: "easy", 
-    category: "linked lists", 
-    solved: false 
-  },
-  { 
-    id: "6", 
-    title: "Maximum Subarray", 
-    difficulty: "medium", 
-    category: "arrays", 
-    solved: false 
-  },
-  { 
-    id: "7", 
-    title: "Climbing Stairs", 
-    difficulty: "easy", 
-    category: "dynamic programming", 
-    solved: true 
-  },
-  { 
-    id: "8", 
-    title: "Merge Intervals", 
-    difficulty: "medium", 
-    category: "arrays", 
-    solved: false 
-  },
-  { 
-    id: "9", 
-    title: "3Sum", 
-    difficulty: "medium", 
-    category: "arrays", 
-    solved: false 
-  },
-  { 
-    id: "10", 
-    title: "Trapping Rain Water", 
-    difficulty: "hard", 
-    category: "two pointers", 
-    solved: false 
-  }
-];
+import { Textarea } from "@/components/ui/textarea";
+import { Progress } from "@/components/ui/progress";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import CodeEditor from "@/components/CodeEditor/CodeEditor";
+import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card";
+import { toast } from "@/hooks/use-toast";
 
 const CodeLab = () => {
-  const [activeTab, setActiveTab] = useState("code-practice");
-  const [searchTerm, setSearchTerm] = useState("");
-  const [difficultyFilter, setDifficultyFilter] = useState([]);
-  const [statusFilter, setStatusFilter] = useState([]);
-  
-  // Filter problems based on search term and filters
-  const filteredProblems = problems.filter(problem => {
-    const matchesSearch = problem.title.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesDifficulty = difficultyFilter.length === 0 || difficultyFilter.includes(problem.difficulty);
-    const matchesStatus = statusFilter.length === 0 || 
-      (statusFilter.includes("solved") && problem.solved) || 
-      (statusFilter.includes("unsolved") && !problem.solved);
-    
-    return matchesSearch && matchesDifficulty && matchesStatus;
+  const navigate = useNavigate();
+  const [activeTab, setActiveTab] = useState("explore");
+  const [code, setCode] = useState('console.log("Hello, World!");');
+  const [language, setLanguage] = useState("javascript");
+  const [output, setOutput] = useState("");
+  const [isRunning, setIsRunning] = useState(false);
+  const [currentProblem, setCurrentProblem] = useState(null);
+  const [selectedDifficulty, setSelectedDifficulty] = useState("all");
+  const [searchQuery, setSearchQuery] = useState("");
+
+  // Check if user is logged in
+  useState(() => {
+    const userEmail = localStorage.getItem("userEmail");
+    if (!userEmail) {
+      toast({
+        title: "Authentication required",
+        description: "Please log in to access this page",
+        variant: "destructive",
+      });
+      navigate("/login");
+    }
+  }, [navigate]);
+
+  const handleRunCode = () => {
+    setIsRunning(true);
+    // Simulate code execution
+    setTimeout(() => {
+      setOutput("Hello, World!");
+      setIsRunning(false);
+      toast({
+        title: "Code executed successfully",
+        description: "Your code was run without errors",
+      });
+    }, 1500);
+  };
+
+  const handleSubmitCode = () => {
+    setIsRunning(true);
+    // Simulate code submission
+    setTimeout(() => {
+      setIsRunning(false);
+      toast({
+        title: "Solution submitted",
+        description: "Your solution passed all test cases!",
+        variant: "default",
+      });
+    }, 2000);
+  };
+
+  const handleSelectProblem = (problem) => {
+    setCurrentProblem(problem);
+    setActiveTab("solve");
+    setCode(`// ${problem.title}\n// ${problem.description}\n\nfunction solve(input) {\n  // Your code here\n  \n}\n`);
+  };
+
+  const filteredProblems = codingProblems.filter((problem) => {
+    const matchesDifficulty = selectedDifficulty === "all" || problem.difficulty === selectedDifficulty;
+    const matchesSearch = problem.title.toLowerCase().includes(searchQuery.toLowerCase());
+    return matchesDifficulty && matchesSearch;
   });
-  
-  // Toggle filter values
-  const toggleDifficultyFilter = (value) => {
-    if (difficultyFilter.includes(value)) {
-      setDifficultyFilter(difficultyFilter.filter(v => v !== value));
-    } else {
-      setDifficultyFilter([...difficultyFilter, value]);
-    }
-  };
-  
-  const toggleStatusFilter = (value) => {
-    if (statusFilter.includes(value)) {
-      setStatusFilter(statusFilter.filter(v => v !== value));
-    } else {
-      setStatusFilter([...statusFilter, value]);
-    }
-  };
 
   return (
     <div className="flex flex-col min-h-screen">
-      <Navbar userRole="student" />
-      
-      <main className="flex-1 container max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
-          <div>
-            <h1 className="text-3xl font-bold flex items-center">
-              <Code className="mr-3 h-8 w-8 text-primary" />
-              Code Lab
-            </h1>
-            <p className="text-muted-foreground mt-1">Practice coding problems and enhance your skills</p>
-          </div>
-        </div>
+      <Navbar />
+      <main className="flex-1 container max-w-7xl mx-auto px-4 py-8">
+        <h1 className="text-3xl font-bold mb-6">Code Lab</h1>
         
-        <Tabs defaultValue="code-practice" value={activeTab} onValueChange={setActiveTab} className="mb-6">
-          <TabsList className="grid w-full grid-cols-2">
-            <TabsTrigger value="code-practice">Problem Practice</TabsTrigger>
-            <TabsTrigger value="ai-assistant">AI Assistant</TabsTrigger>
+        <Tabs value={activeTab} onValueChange={setActiveTab}>
+          <TabsList className="mb-6">
+            <TabsTrigger value="explore">Explore Problems</TabsTrigger>
+            <TabsTrigger value="solve" disabled={!currentProblem}>Solve Problem</TabsTrigger>
+            <TabsTrigger value="submissions">My Submissions</TabsTrigger>
           </TabsList>
-        </Tabs>
-        
-        <TabsContent value="code-practice" className="m-0">
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            {/* Problems list sidebar */}
-            <Card className="lg:col-span-1 h-[calc(100vh-240px)] flex flex-col">
-              <CardHeader className="pb-3">
-                <CardTitle className="text-lg">Coding Problems</CardTitle>
-                <div className="relative">
-                  <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-                  <Input
-                    type="search"
-                    placeholder="Search problems..."
-                    className="pl-8"
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                  />
-                </div>
-              </CardHeader>
-              
-              <div className="px-4 pb-2 flex flex-wrap gap-2">
-                <Button 
-                  variant={difficultyFilter.includes("easy") ? "default" : "outline"}
-                  size="sm"
-                  onClick={() => toggleDifficultyFilter("easy")}
-                  className="text-xs h-7 px-2"
-                >
-                  Easy
-                </Button>
-                <Button 
-                  variant={difficultyFilter.includes("medium") ? "default" : "outline"}
-                  size="sm"
-                  onClick={() => toggleDifficultyFilter("medium")}
-                  className="text-xs h-7 px-2"
-                >
-                  Medium
-                </Button>
-                <Button 
-                  variant={difficultyFilter.includes("hard") ? "default" : "outline"}
-                  size="sm"
-                  onClick={() => toggleDifficultyFilter("hard")}
-                  className="text-xs h-7 px-2"
-                >
-                  Hard
-                </Button>
-                <Button 
-                  variant={statusFilter.includes("solved") ? "default" : "outline"}
-                  size="sm"
-                  onClick={() => toggleStatusFilter("solved")}
-                  className="text-xs h-7 px-2"
-                >
-                  Solved
-                </Button>
-                <Button 
-                  variant={statusFilter.includes("unsolved") ? "default" : "outline"}
-                  size="sm"
-                  onClick={() => toggleStatusFilter("unsolved")}
-                  className="text-xs h-7 px-2"
-                >
-                  Unsolved
-                </Button>
+          
+          <TabsContent value="explore" className="space-y-6">
+            <div className="flex flex-col md:flex-row gap-4 mb-6">
+              <div className="flex-1">
+                <Input
+                  placeholder="Search problems..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="w-full"
+                />
               </div>
-              
-              <CardContent className="flex-1 overflow-auto px-2 py-2">
-                <div className="space-y-1">
-                  {filteredProblems.length > 0 ? (
-                    filteredProblems.map((problem) => (
-                      <div 
-                        key={problem.id}
-                        className={`flex items-center justify-between p-2 rounded-md cursor-pointer hover:bg-muted ${
-                          problem.id === "1" ? "bg-muted" : ""
-                        }`}
-                      >
-                        <div className="flex items-center gap-2">
-                          {problem.solved ? (
-                            <CheckCircle className="h-4 w-4 text-green-500" />
-                          ) : (
-                            <div className="h-4 w-4 rounded-full border border-muted-foreground" />
-                          )}
-                          <span className="text-sm">{problem.title}</span>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <Badge 
-                            variant="outline"
-                            className={`text-xs ${
-                              problem.difficulty === "easy" 
-                                ? "bg-green-100 text-green-800 border-green-200" 
-                                : problem.difficulty === "medium"
-                                ? "bg-amber-100 text-amber-800 border-amber-200"
-                                : "bg-red-100 text-red-800 border-red-200"
-                            }`}
-                          >
-                            {problem.difficulty}
-                          </Badge>
-                          <ChevronRight className="h-4 w-4 text-muted-foreground" />
-                        </div>
-                      </div>
-                    ))
-                  ) : (
-                    <div className="text-center py-8">
-                      <Info className="h-10 w-10 mx-auto text-muted-foreground mb-2" />
-                      <p className="text-muted-foreground">No problems found</p>
-                    </div>
-                  )}
-                </div>
-              </CardContent>
-            </Card>
-            
-            {/* Code editor */}
-            <div className="lg:col-span-2 h-[calc(100vh-240px)]">
-              <CodeEditor problem={problemData} />
+              <div className="w-full md:w-48">
+                <Select value={selectedDifficulty} onValueChange={setSelectedDifficulty}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Filter by difficulty" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All Difficulties</SelectItem>
+                    <SelectItem value="easy">Easy</SelectItem>
+                    <SelectItem value="medium">Medium</SelectItem>
+                    <SelectItem value="hard">Hard</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
             </div>
-          </div>
-        </TabsContent>
-        
-        <TabsContent value="ai-assistant" className="m-0">
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            {/* AI assistant options sidebar */}
-            <Card className="lg:col-span-1 h-[calc(100vh-240px)] flex flex-col">
-              <CardHeader className="pb-3">
-                <CardTitle className="text-lg">AI Assistant</CardTitle>
-                <p className="text-sm text-muted-foreground">
-                  Get help with coding problems, debugging, and learning.
-                </p>
-              </CardHeader>
-              
-              <CardContent className="space-y-4">
-                <div>
-                  <h3 className="text-sm font-medium mb-2">Coding Help</h3>
-                  <div className="space-y-2">
-                    <Button variant="outline" className="w-full justify-start text-left">
-                      <FileEdit className="h-4 w-4 mr-2" />
-                      Explain the current problem
-                    </Button>
-                    <Button variant="outline" className="w-full justify-start text-left">
-                      <Info className="h-4 w-4 mr-2" />
-                      Help me solve this step-by-step
-                    </Button>
-                    <Button variant="outline" className="w-full justify-start text-left">
-                      <Code className="h-4 w-4 mr-2" />
-                      Debug my code
-                    </Button>
-                  </div>
-                </div>
-                
-                <Separator />
-                
-                <div>
-                  <h3 className="text-sm font-medium mb-2">Learning Resources</h3>
-                  <div className="space-y-2">
-                    <Button variant="outline" className="w-full justify-start text-left">
-                      <TrendingUp className="h-4 w-4 mr-2" />
-                      Optimize my solution
-                    </Button>
-                    <Button variant="outline" className="w-full justify-start text-left">
-                      <Star className="h-4 w-4 mr-2" />
-                      Show me best practices
-                    </Button>
-                    <Button variant="outline" className="w-full justify-start text-left">
-                      <User className="h-4 w-4 mr-2" />
-                      Personalized recommendations
-                    </Button>
-                  </div>
-                </div>
-                
-                <Separator />
-                
-                <p className="text-xs text-muted-foreground">
-                  Note: The AI assistant is here to guide your learning process, not to provide direct answers for assignments.
-                </p>
-              </CardContent>
-            </Card>
             
-            {/* AI chat interface */}
-            <Card className="lg:col-span-2 h-[calc(100vh-240px)] flex flex-col">
-              <CardHeader className="pb-3">
-                <CardTitle className="text-lg">AI Chat</CardTitle>
-              </CardHeader>
-              
-              <CardContent className="flex-1 flex flex-col">
-                <div className="flex-1 overflow-auto bg-muted rounded-md p-4 mb-4">
-                  <div className="space-y-4">
-                    <div className="flex gap-3">
-                      <div className="h-8 w-8 rounded-full bg-primary flex items-center justify-center text-primary-foreground font-semibold">
-                        AI
-                      </div>
-                      <div className="bg-card rounded-lg p-3 max-w-[80%]">
-                        <p>Hello! I'm your Code Lab AI assistant. How can I help you today?</p>
-                      </div>
-                    </div>
-                    
-                    <div className="flex gap-3 justify-end">
-                      <div className="bg-primary text-primary-foreground rounded-lg p-3 max-w-[80%]">
-                        <p>Can you explain how to approach the Two Sum problem?</p>
-                      </div>
-                      <div className="h-8 w-8 rounded-full bg-secondary flex items-center justify-center text-secondary-foreground font-semibold">
-                        You
-                      </div>
-                    </div>
-                    
-                    <div className="flex gap-3">
-                      <div className="h-8 w-8 rounded-full bg-primary flex items-center justify-center text-primary-foreground font-semibold">
-                        AI
-                      </div>
-                      <div className="bg-card rounded-lg p-3 max-w-[80%]">
-                        <p>
-                          The Two Sum problem asks you to find two numbers in an array that add up to a target value.
-                        </p>
-                        <p className="mt-2">
-                          There are multiple approaches, but the most efficient one uses a hash map:
-                        </p>
-                        <ol className="list-decimal list-inside mt-2 space-y-1">
-                          <li>Create an empty hash map</li>
-                          <li>Iterate through the array</li>
-                          <li>For each element, calculate the complement (target - current element)</li>
-                          <li>Check if the complement exists in the hash map</li>
-                          <li>If it does, return the current index and the complement's index</li>
-                          <li>Otherwise, add the current element and its index to the hash map</li>
-                        </ol>
-                        <p className="mt-2">
-                          This approach has O(n) time complexity since we only need to go through the array once.
-                        </p>
-                      </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {filteredProblems.map((problem, index) => (
+                <div
+                  key={index}
+                  className="border rounded-lg p-4 hover:shadow-md transition-shadow cursor-pointer"
+                  onClick={() => handleSelectProblem(problem)}
+                >
+                  <div className="flex justify-between items-start mb-2">
+                    <h3 className="font-semibold">{problem.title}</h3>
+                    <span className={`text-xs px-2 py-1 rounded-full ${
+                      problem.difficulty === "easy" ? "bg-green-100 text-green-800" :
+                      problem.difficulty === "medium" ? "bg-yellow-100 text-yellow-800" :
+                      "bg-red-100 text-red-800"
+                    }`}>
+                      {problem.difficulty}
+                    </span>
+                  </div>
+                  <p className="text-sm text-gray-600 mb-3 line-clamp-2">{problem.description}</p>
+                  <div className="flex justify-between text-xs text-gray-500">
+                    <span>Success rate: {problem.successRate}</span>
+                    <span>{problem.submissions} submissions</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </TabsContent>
+          
+          <TabsContent value="solve" className="space-y-6">
+            {currentProblem && (
+              <>
+                <div className="bg-muted p-4 rounded-lg mb-6">
+                  <h2 className="text-xl font-semibold mb-2">{currentProblem.title}</h2>
+                  <div className="flex items-center gap-2 mb-3">
+                    <span className={`text-xs px-2 py-1 rounded-full ${
+                      currentProblem.difficulty === "easy" ? "bg-green-100 text-green-800" :
+                      currentProblem.difficulty === "medium" ? "bg-yellow-100 text-yellow-800" :
+                      "bg-red-100 text-red-800"
+                    }`}>
+                      {currentProblem.difficulty}
+                    </span>
+                    <span className="text-sm text-gray-600">Time limit: {currentProblem.timeLimit}</span>
+                  </div>
+                  <p className="mb-4">{currentProblem.description}</p>
+                  <div className="mb-4">
+                    <h3 className="font-medium mb-2">Constraints:</h3>
+                    <p className="text-sm text-gray-700">{currentProblem.constraints}</p>
+                  </div>
+                  <div>
+                    <h3 className="font-medium mb-2">Examples:</h3>
+                    <div className="space-y-3">
+                      {currentProblem.examples.map((example, idx) => (
+                        <div key={idx} className="bg-background p-3 rounded border">
+                          <div className="grid grid-cols-2 gap-4">
+                            <div>
+                              <span className="text-xs font-semibold">Input:</span>
+                              <pre className="text-xs bg-muted p-2 rounded mt-1">{example.input}</pre>
+                            </div>
+                            <div>
+                              <span className="text-xs font-semibold">Output:</span>
+                              <pre className="text-xs bg-muted p-2 rounded mt-1">{example.output}</pre>
+                            </div>
+                          </div>
+                          {example.explanation && (
+                            <div className="mt-2">
+                              <span className="text-xs font-semibold">Explanation:</span>
+                              <p className="text-xs mt-1">{example.explanation}</p>
+                            </div>
+                          )}
+                        </div>
+                      ))}
                     </div>
                   </div>
                 </div>
                 
-                <div className="relative">
-                  <Input
-                    placeholder="Ask a question about your code or the problem..."
-                    className="pr-16"
-                  />
-                  <Button 
-                    size="sm" 
-                    className="absolute right-1 top-1"
-                  >
-                    Send
-                  </Button>
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                  <div>
+                    <div className="mb-4 flex justify-between items-center">
+                      <h3 className="font-semibold">Code Editor</h3>
+                      <Select value={language} onValueChange={setLanguage}>
+                        <SelectTrigger className="w-32">
+                          <SelectValue placeholder="Language" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="javascript">JavaScript</SelectItem>
+                          <SelectItem value="python">Python</SelectItem>
+                          <SelectItem value="java">Java</SelectItem>
+                          <SelectItem value="cpp">C++</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div className="border rounded-lg overflow-hidden">
+                      <CodeEditor
+                        code={code}
+                        language={language}
+                        onChange={setCode}
+                        height="400px"
+                      />
+                    </div>
+                    <div className="flex gap-2 mt-4">
+                      <Button 
+                        onClick={handleRunCode} 
+                        disabled={isRunning}
+                        className="flex-1"
+                      >
+                        {isRunning ? "Running..." : "Run Code"}
+                      </Button>
+                      <Button 
+                        onClick={handleSubmitCode} 
+                        disabled={isRunning}
+                        variant="default"
+                        className="flex-1"
+                      >
+                        {isRunning ? "Submitting..." : "Submit Solution"}
+                      </Button>
+                    </div>
+                  </div>
+                  
+                  <div>
+                    <div className="flex justify-between items-center mb-2">
+                      <h3 className="font-semibold">Output</h3>
+                      <HoverCard>
+                        <HoverCardTrigger asChild>
+                          <Button variant="outline" size="sm">Get Hint</Button>
+                        </HoverCardTrigger>
+                        <HoverCardContent className="w-80">
+                          <h4 className="font-semibold mb-2">Hint</h4>
+                          <p className="text-sm">Try approaching this problem using a {currentProblem.hintTopic} approach.</p>
+                        </HoverCardContent>
+                      </HoverCard>
+                    </div>
+                    <div className="bg-black text-green-400 font-mono p-4 rounded-lg h-[400px] overflow-auto">
+                      {isRunning ? (
+                        <div className="flex flex-col items-center justify-center h-full">
+                          <p className="mb-2">Running your code...</p>
+                          <Progress value={45} className="w-1/2" />
+                        </div>
+                      ) : output ? (
+                        output
+                      ) : (
+                        <p className="text-gray-500">Code output will appear here...</p>
+                      )}
+                    </div>
+                  </div>
                 </div>
-              </CardContent>
-            </Card>
-          </div>
-        </TabsContent>
+              </>
+            )}
+          </TabsContent>
+          
+          <TabsContent value="submissions" className="space-y-6">
+            <h2 className="text-xl font-semibold mb-4">My Submissions</h2>
+            <div className="border rounded-lg divide-y">
+              {mySubmissions.map((submission, index) => (
+                <div key={index} className="p-4 hover:bg-muted/50">
+                  <div className="flex justify-between mb-2">
+                    <h3 className="font-medium">{submission.problemTitle}</h3>
+                    <span className={`px-2 py-1 text-xs rounded-full ${
+                      submission.status === "Accepted" ? "bg-green-100 text-green-800" :
+                      submission.status === "Wrong Answer" ? "bg-red-100 text-red-800" :
+                      "bg-yellow-100 text-yellow-800"
+                    }`}>
+                      {submission.status}
+                    </span>
+                  </div>
+                  <div className="grid grid-cols-3 text-sm text-gray-600">
+                    <div>Language: {submission.language}</div>
+                    <div>Runtime: {submission.runtime}</div>
+                    <div className="text-right">{submission.submittedAt}</div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </TabsContent>
+        </Tabs>
       </main>
-      
       <Footer />
     </div>
   );
 };
+
+// Sample data for coding problems
+const codingProblems = [
+  {
+    title: "Two Sum",
+    description: "Given an array of integers nums and an integer target, return indices of the two numbers such that they add up to target.",
+    constraints: "2 ≤ nums.length ≤ 10^4, -10^9 ≤ nums[i] ≤ 10^9, -10^9 ≤ target ≤ 10^9",
+    examples: [
+      {
+        input: "nums = [2,7,11,15], target = 9",
+        output: "[0,1]",
+        explanation: "Because nums[0] + nums[1] == 9, we return [0, 1]."
+      },
+      {
+        input: "nums = [3,2,4], target = 6",
+        output: "[1,2]"
+      }
+    ],
+    difficulty: "easy",
+    timeLimit: "1 second",
+    successRate: "72%",
+    submissions: 1245,
+    hintTopic: "hash table"
+  },
+  {
+    title: "Merge Intervals",
+    description: "Given an array of intervals where intervals[i] = [starti, endi], merge all overlapping intervals.",
+    constraints: "1 ≤ intervals.length ≤ 10^4, intervals[i].length == 2, 0 ≤ starti ≤ endi ≤ 10^4",
+    examples: [
+      {
+        input: "intervals = [[1,3],[2,6],[8,10],[15,18]]",
+        output: "[[1,6],[8,10],[15,18]]",
+        explanation: "Since intervals [1,3] and [2,6] overlap, merge them into [1,6]."
+      }
+    ],
+    difficulty: "medium",
+    timeLimit: "2 seconds",
+    successRate: "45%",
+    submissions: 832,
+    hintTopic: "sorting"
+  },
+  {
+    title: "LRU Cache",
+    description: "Design a data structure that follows the constraints of a Least Recently Used (LRU) cache.",
+    constraints: "1 ≤ capacity ≤ 3000, 0 ≤ key ≤ 10^4, 0 ≤ value ≤ 10^5",
+    examples: [
+      {
+        input: "LRUCache lRUCache = new LRUCache(2); lRUCache.put(1, 1); lRUCache.put(2, 2); lRUCache.get(1); lRUCache.put(3, 3); lRUCache.get(2); lRUCache.put(4, 4); lRUCache.get(1); lRUCache.get(3); lRUCache.get(4);",
+        output: "[1,-1,3,4]",
+        explanation: "Cache with capacity 2, operations return [get(1), get(2), get(3), get(4)]"
+      }
+    ],
+    difficulty: "hard",
+    timeLimit: "3 seconds",
+    successRate: "27%",
+    submissions: 492,
+    hintTopic: "hash map and linked list"
+  }
+];
+
+// Sample data for submissions
+const mySubmissions = [
+  {
+    problemTitle: "Two Sum",
+    status: "Accepted",
+    language: "JavaScript",
+    runtime: "92ms",
+    submittedAt: "2 days ago"
+  },
+  {
+    problemTitle: "Valid Parentheses",
+    status: "Wrong Answer",
+    language: "Python",
+    runtime: "N/A",
+    submittedAt: "5 days ago"
+  },
+  {
+    problemTitle: "Merge Intervals",
+    status: "Time Limit Exceeded",
+    language: "Java",
+    runtime: "N/A",
+    submittedAt: "1 week ago"
+  },
+  {
+    problemTitle: "Two Sum",
+    status: "Accepted",
+    language: "C++",
+    runtime: "78ms",
+    submittedAt: "3 weeks ago"
+  }
+];
 
 export default CodeLab;
