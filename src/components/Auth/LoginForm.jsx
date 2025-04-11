@@ -1,21 +1,10 @@
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { z } from "zod";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { Eye, EyeOff, GraduationCap } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import {
-  Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { toast } from "@/hooks/use-toast";
 import {
   Card,
   CardContent,
@@ -24,232 +13,205 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { useToast } from "@/hooks/use-toast";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { AlertCircle, Check, EyeIcon, EyeOffIcon } from "lucide-react";
 
 const LoginForm = () => {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const [selectedRole, setSelectedRole] = useState("student");
-  const { toast } = useToast();
+  const [isLoading, setIsLoading] = useState(false);
+  const [authMode, setAuthMode] = useState("login");
+  const [errors, setErrors] = useState({});
   const navigate = useNavigate();
 
-  // Create schema based on selected role
-  const createFormSchema = (role) => {
-    let emailSchema;
-    
-    if (role === "student") {
-      emailSchema = z.string()
-        .email("Please enter a valid email address.")
-        .refine((email) => email.endsWith("@gmail.com"), {
-          message: "Student email must end with @gmail.com",
-        });
-    } else if (role === "faculty") {
-      emailSchema = z.string()
-        .email("Please enter a valid email address.")
-        .refine((email) => email.endsWith("@faculty.com"), {
-          message: "Faculty email must end with @faculty.com",
-        });
-    } else if (role === "admin") {
-      emailSchema = z.string()
-        .email("Please enter a valid email address.")
-        .refine((email) => email.endsWith("@admin.com"), {
-          message: "Admin email must end with @admin.com",
-        });
+  const validateEmail = (email) => {
+    // Basic email validation
+    if (!email || !email.includes('@')) {
+      return false;
     }
     
-    return z.object({
-      email: emailSchema,
-      password: z.string().min(6, {
-        message: "Password must be at least 6 characters.",
-      }),
-      role: z.enum(["student", "faculty", "admin"]),
-    });
+    // Role-based domain validation
+    if (email.endsWith('@faculty.com') || 
+        email.endsWith('@admin.com') || 
+        email.endsWith('@gmail.com')) {
+      return true;
+    }
+    
+    return false;
   };
 
-  // Create the form with dynamic schema
-  const form = useForm({
-    resolver: zodResolver(createFormSchema(selectedRole)),
-    defaultValues: {
-      email: "",
-      password: "",
-      role: "student",
-    },
-  });
-
-  // Update the schema when role changes
-  useEffect(() => {
-    form.setValue("role", selectedRole);
-    form.trigger("email"); // Re-validate email when role changes
-  }, [selectedRole, form]);
-
-  // Handle role change
-  const handleRoleChange = (value) => {
-    setSelectedRole(value);
+  const validatePassword = (password) => {
+    return password.length >= 6;
   };
 
-  const onSubmit = (data) => {
-    console.log("Login data:", data);
+  const handleSubmit = (e) => {
+    e.preventDefault();
     
-    // For demo purposes, we'll just simulate a successful login
-    // In a real app, this would validate credentials with the backend
-    toast({
-      title: "Login successful!",
-      description: `Welcome back! You are logged in as a ${data.role}.`,
-    });
+    const newErrors = {};
     
-    // Navigate to the dashboard based on role
-    navigate("/dashboard");
+    // Validate email
+    if (!validateEmail(email)) {
+      newErrors.email = "Please enter a valid email address.";
+      
+      // Add more specific error message based on domain
+      if (email.includes('@') && 
+          !email.endsWith('@faculty.com') && 
+          !email.endsWith('@admin.com') && 
+          !email.endsWith('@gmail.com')) {
+        newErrors.email = "Email must end with @faculty.com, @admin.com, or @gmail.com based on your role.";
+      }
+    }
+    
+    // Validate password
+    if (!validatePassword(password)) {
+      newErrors.password = "Password must be at least 6 characters.";
+    }
+    
+    setErrors(newErrors);
+    
+    // If there are errors, don't proceed
+    if (Object.keys(newErrors).length > 0) {
+      return;
+    }
+    
+    setIsLoading(true);
+    
+    // Simulate login process
+    setTimeout(() => {
+      setIsLoading(false);
+      
+      // Store user email and derive role from email domain
+      localStorage.setItem("userEmail", email);
+      
+      let role = "student";
+      if (email.includes("@faculty.com")) {
+        role = "faculty";
+      } else if (email.includes("@admin.com")) {
+        role = "admin";
+      }
+      localStorage.setItem("userRole", role);
+      
+      // Show success message
+      toast({
+        title: "Login successful",
+        description: `Welcome back, ${email.split('@')[0]}!`,
+      });
+      
+      // Redirect to dashboard
+      navigate("/dashboard");
+    }, 1500);
   };
 
   return (
-    <Card className="w-full max-w-md mx-auto">
-      <CardHeader className="space-y-1 flex flex-col items-center text-center">
-        <div className="flex items-center justify-center h-12 w-12 rounded-full bg-primary/10 mb-2">
-          <GraduationCap className="h-6 w-6 text-primary" />
-        </div>
-        <CardTitle className="text-2xl">Welcome Back</CardTitle>
+    <Card className="w-full shadow-lg">
+      <CardHeader>
+        <CardTitle className="text-2xl">Welcome to Campus Bridge</CardTitle>
         <CardDescription>
-          Sign in to your Campus Bridge account
+          Sign in to access your academic and coding portal
         </CardDescription>
       </CardHeader>
-      <CardContent>
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-            <FormField
-              control={form.control}
-              name="role"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Login as</FormLabel>
-                  <Select 
-                    onValueChange={(value) => {
-                      field.onChange(value);
-                      handleRoleChange(value);
-                    }} 
-                    defaultValue={field.value}
-                  >
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select a role" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      <SelectItem value="student">Student</SelectItem>
-                      <SelectItem value="faculty">Faculty</SelectItem>
-                      <SelectItem value="admin">Administrator</SelectItem>
-                    </SelectContent>
-                  </Select>
-                  <FormDescription>
-                    {selectedRole === "student" ? "Use name@gmail.com format" :
-                     selectedRole === "faculty" ? "Use name@faculty.com format" :
-                     "Use name@admin.com format"}
-                  </FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            
-            <FormField
-              control={form.control}
-              name="email"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Email</FormLabel>
-                  <FormControl>
-                    <Input 
-                      placeholder={
-                        selectedRole === "student" ? "name@gmail.com" :
-                        selectedRole === "faculty" ? "name@faculty.com" :
-                        "name@admin.com"
-                      } 
-                      {...field}
-                      autoComplete="email"
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            
-            <FormField
-              control={form.control}
-              name="password"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Password</FormLabel>
-                  <FormControl>
-                    <div className="relative">
-                      <Input
-                        type={showPassword ? "text" : "password"}
-                        placeholder="••••••••"
-                        {...field}
-                        autoComplete="current-password"
-                      />
-                      <Button
-                        type="button"
-                        variant="ghost"
-                        size="icon"
-                        className="absolute right-0 top-0 h-full px-3"
-                        onClick={() => setShowPassword(!showPassword)}
-                      >
-                        {showPassword ? (
-                          <EyeOff className="h-4 w-4 text-muted-foreground" />
-                        ) : (
-                          <Eye className="h-4 w-4 text-muted-foreground" />
-                        )}
-                      </Button>
+      
+      <Tabs defaultValue="login" value={authMode} onValueChange={setAuthMode}>
+        <TabsList className="grid w-full grid-cols-2">
+          <TabsTrigger value="login">Login</TabsTrigger>
+          <TabsTrigger value="signup">Sign Up</TabsTrigger>
+        </TabsList>
+        
+        <TabsContent value="login">
+          <form onSubmit={handleSubmit}>
+            <CardContent className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="email">Email</Label>
+                <div className="relative">
+                  <Input
+                    id="email"
+                    type="email"
+                    placeholder="Enter your email address"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    className={errors.email ? "border-destructive" : ""}
+                    autoComplete="email"
+                  />
+                  {errors.email && (
+                    <div className="text-destructive text-sm mt-1 flex items-center">
+                      <AlertCircle className="h-4 w-4 mr-1" />
+                      {errors.email}
                     </div>
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-2">
-                <input
-                  type="checkbox"
-                  id="remember"
-                  className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
-                />
-                <label
-                  htmlFor="remember"
-                  className="text-sm text-muted-foreground"
-                >
-                  Remember me
-                </label>
+                  )}
+                  <div className="text-xs text-muted-foreground mt-1">
+                    <ul>
+                      <li>• Students: use name@gmail.com</li>
+                      <li>• Faculty: use name@faculty.com</li>
+                      <li>• Admin: use name@admin.com</li>
+                    </ul>
+                  </div>
+                </div>
               </div>
-              <a
-                href="#"
-                className="text-sm font-medium text-primary hover:text-primary/80"
-              >
-                Forgot password?
-              </a>
-            </div>
+              
+              <div className="space-y-2">
+                <div className="flex justify-between">
+                  <Label htmlFor="password">Password</Label>
+                  <a href="#" className="text-sm text-primary hover:underline">
+                    Forgot password?
+                  </a>
+                </div>
+                <div className="relative">
+                  <Input
+                    id="password"
+                    type={showPassword ? "text" : "password"}
+                    placeholder="Enter your password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    className={`pr-10 ${errors.password ? "border-destructive" : ""}`}
+                    autoComplete="current-password"
+                  />
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="icon"
+                    className="absolute right-0 top-0 h-full px-3"
+                    onClick={() => setShowPassword(!showPassword)}
+                  >
+                    {showPassword ? (
+                      <EyeOffIcon className="h-4 w-4 text-muted-foreground" />
+                    ) : (
+                      <EyeIcon className="h-4 w-4 text-muted-foreground" />
+                    )}
+                  </Button>
+                  {errors.password && (
+                    <div className="text-destructive text-sm mt-1 flex items-center">
+                      <AlertCircle className="h-4 w-4 mr-1" />
+                      {errors.password}
+                    </div>
+                  )}
+                </div>
+              </div>
+            </CardContent>
             
-            <Button type="submit" className="w-full">
-              Sign in
-            </Button>
+            <CardFooter>
+              <Button className="w-full" type="submit" disabled={isLoading}>
+                {isLoading ? "Signing in..." : "Sign In"}
+              </Button>
+            </CardFooter>
           </form>
-        </Form>
-      </CardContent>
-      <CardFooter className="flex flex-col">
-        <div className="mt-2 text-center text-sm">
-          <span className="text-muted-foreground">Don't have an account? </span>
-          <a
-            href="#"
-            className="font-medium text-primary hover:text-primary/80"
-          >
-            Contact administrator
-          </a>
-        </div>
-      </CardFooter>
+        </TabsContent>
+        
+        <TabsContent value="signup">
+          <CardContent className="text-center py-10">
+            <div className="mb-4 mx-auto w-14 h-14 bg-primary/10 rounded-full flex items-center justify-center">
+              <AlertCircle className="h-6 w-6 text-primary" />
+            </div>
+            <h3 className="text-lg font-medium mb-2">Registration is Managed by Admin</h3>
+            <p className="text-muted-foreground mb-6">
+              New accounts can only be created by your institution's administrator.
+            </p>
+            <Button variant="outline" onClick={() => setAuthMode("login")}>
+              Back to Login
+            </Button>
+          </CardContent>
+        </TabsContent>
+      </Tabs>
     </Card>
   );
 };
