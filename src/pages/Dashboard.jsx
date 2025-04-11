@@ -8,7 +8,7 @@ import AdminDashboard from "@/components/Dashboard/AdminDashboard";
 
 const Dashboard = () => {
   // In a real app, this would come from auth context
-  const [userRole, setUserRole] = useState<"student" | "faculty" | "admin">("student");
+  const [userRole, setUserRole] = useState("student");
   
   // Component to render based on user role
   const DashboardComponent = () => {

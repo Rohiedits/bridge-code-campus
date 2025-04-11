@@ -4,10 +4,10 @@ import { AlertCircle, BookOpen, Calendar, Clock, Code, FileText, GraduationCap, 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
-import CourseCard, { CourseCardProps } from "@/components/Course/CourseCard";
+import CourseCard from "@/components/Course/CourseCard";
 
 // Mock data for faculty dashboard
-const courses: CourseCardProps[] = [
+const courses = [
   {
     id: "1",
     title: "Data Structures & Algorithms",

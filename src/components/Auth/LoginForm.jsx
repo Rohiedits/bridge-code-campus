@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
@@ -33,25 +33,48 @@ import {
 } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 
-const formSchema = z.object({
-  email: z.string().email({
-    message: "Please enter a valid email address.",
-  }),
-  password: z.string().min(6, {
-    message: "Password must be at least 6 characters.",
-  }),
-  role: z.enum(["student", "faculty", "admin"]),
-});
-
-type FormData = z.infer<typeof formSchema>;
-
 const LoginForm = () => {
   const [showPassword, setShowPassword] = useState(false);
+  const [selectedRole, setSelectedRole] = useState("student");
   const { toast } = useToast();
   const navigate = useNavigate();
 
-  const form = useForm<FormData>({
-    resolver: zodResolver(formSchema),
+  // Create schema based on selected role
+  const createFormSchema = (role) => {
+    let emailSchema;
+    
+    if (role === "student") {
+      emailSchema = z.string()
+        .email("Please enter a valid email address.")
+        .refine((email) => email.endsWith("@gmail.com"), {
+          message: "Student email must end with @gmail.com",
+        });
+    } else if (role === "faculty") {
+      emailSchema = z.string()
+        .email("Please enter a valid email address.")
+        .refine((email) => email.endsWith("@faculty.com"), {
+          message: "Faculty email must end with @faculty.com",
+        });
+    } else if (role === "admin") {
+      emailSchema = z.string()
+        .email("Please enter a valid email address.")
+        .refine((email) => email.endsWith("@admin.com"), {
+          message: "Admin email must end with @admin.com",
+        });
+    }
+    
+    return z.object({
+      email: emailSchema,
+      password: z.string().min(6, {
+        message: "Password must be at least 6 characters.",
+      }),
+      role: z.enum(["student", "faculty", "admin"]),
+    });
+  };
+
+  // Create the form with dynamic schema
+  const form = useForm({
+    resolver: zodResolver(createFormSchema(selectedRole)),
     defaultValues: {
       email: "",
       password: "",
@@ -59,7 +82,18 @@ const LoginForm = () => {
     },
   });
 
-  const onSubmit = (data: FormData) => {
+  // Update the schema when role changes
+  useEffect(() => {
+    form.setValue("role", selectedRole);
+    form.trigger("email"); // Re-validate email when role changes
+  }, [selectedRole, form]);
+
+  // Handle role change
+  const handleRoleChange = (value) => {
+    setSelectedRole(value);
+  };
+
+  const onSubmit = (data) => {
     console.log("Login data:", data);
     
     // For demo purposes, we'll just simulate a successful login
@@ -89,13 +123,51 @@ const LoginForm = () => {
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
             <FormField
               control={form.control}
+              name="role"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Login as</FormLabel>
+                  <Select 
+                    onValueChange={(value) => {
+                      field.onChange(value);
+                      handleRoleChange(value);
+                    }} 
+                    defaultValue={field.value}
+                  >
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select a role" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      <SelectItem value="student">Student</SelectItem>
+                      <SelectItem value="faculty">Faculty</SelectItem>
+                      <SelectItem value="admin">Administrator</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <FormDescription>
+                    {selectedRole === "student" ? "Use name@gmail.com format" :
+                     selectedRole === "faculty" ? "Use name@faculty.com format" :
+                     "Use name@admin.com format"}
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            
+            <FormField
+              control={form.control}
               name="email"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Email</FormLabel>
                   <FormControl>
                     <Input 
-                      placeholder="name@university.edu" 
+                      placeholder={
+                        selectedRole === "student" ? "name@gmail.com" :
+                        selectedRole === "faculty" ? "name@faculty.com" :
+                        "name@admin.com"
+                      } 
                       {...field}
                       autoComplete="email"
                     />
@@ -134,35 +206,6 @@ const LoginForm = () => {
                       </Button>
                     </div>
                   </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            
-            <FormField
-              control={form.control}
-              name="role"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Login as</FormLabel>
-                  <Select 
-                    onValueChange={field.onChange} 
-                    defaultValue={field.value}
-                  >
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select a role" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      <SelectItem value="student">Student</SelectItem>
-                      <SelectItem value="faculty">Faculty</SelectItem>
-                      <SelectItem value="admin">Administrator</SelectItem>
-                    </SelectContent>
-                  </Select>
-                  <FormDescription>
-                    Select your role for the correct dashboard view
-                  </FormDescription>
                   <FormMessage />
                 </FormItem>
               )}

@@ -4,11 +4,11 @@ import { AlertCircle, BookOpen, Calendar, Clock, Code, FileBadge, FileCheck, Tro
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
-import CourseCard, { CourseCardProps } from "@/components/Course/CourseCard";
-import AssignmentCard, { AssignmentCardProps } from "@/components/Course/AssignmentCard";
+import CourseCard from "@/components/Course/CourseCard";
+import AssignmentCard from "@/components/Course/AssignmentCard";
 
 // Mock data for student dashboard
-const courses: CourseCardProps[] = [
+const courses = [
   {
     id: "1",
     title: "Data Structures & Algorithms",
@@ -41,7 +41,7 @@ const courses: CourseCardProps[] = [
   },
 ];
 
-const assignments: AssignmentCardProps[] = [
+const assignments = [
   {
     id: "1",
     title: "Binary Tree Implementation",
