@@ -1,9 +1,181 @@
+// import React, { useState } from 'react';
+// import 'bootstrap/dist/css/bootstrap.min.css';
+// import { Container, Nav, Tab, Row, Col, Card, Button, Accordion } from 'react-bootstrap';
 
+// const LearningHub = () => {
+//   const [key, setKey] = useState('EEE');
+
+//   const courses = {
+//     EEE: {
+//       subjects: [
+//         {
+//           name: 'Semister 1-1',
+//           notes: ['MATHEMATICS-I', 'PROGRAMMING FOR PROBLEM SOLVING USING C', 'ENGINEERING DRAWING & DESIGN','COMMUNICATIVE ENGLISH'],
+//           videos: ['Introduction to Circuits', 'Kirchhoff\'s Laws', 'AC Analysis'],
+//           roadmap: 'Start with basic circuit concepts, move to network analysis, then advanced topics.'
+//         },
+//         {
+//           name: 'Power Systems',
+//           notes: ['Power Generation', 'Transmission Lines', 'Power Distribution'],
+//           videos: ['Power System Basics', 'Transmission Fundamentals', 'Distribution Networks'],
+//           roadmap: 'Begin with generation concepts, understand transmission, finally distribution systems.'
+//         }
+//       ]
+//     },
+//     CSE: {
+//       subjects: [
+//         {
+//           name: 'Data Structures',
+//           notes: ['Arrays & Linked Lists', 'Trees & Graphs', 'Algorithms'],
+//           videos: ['DS Introduction', 'Tree Traversals', 'Graph Algorithms'],
+//           roadmap: 'Master basic data structures before moving to advanced concepts.'
+//         },
+//         {
+//           name: 'Operating Systems',
+//           notes: ['Process Management', 'Memory Management', 'File Systems'],
+//           videos: ['OS Fundamentals', 'Process Scheduling', 'Memory Allocation'],
+//           roadmap: 'Start with process concepts, then memory, finally file systems.'
+//         }
+//       ]
+//     },
+//     ECE: {
+//       subjects: [
+//         {
+//           name: 'Digital Electronics',
+//           notes: ['Boolean Algebra', 'Logic Gates', 'Sequential Circuits'],
+//           videos: ['Digital Basics', 'Combinational Circuits', 'Flip Flops'],
+//           roadmap: 'Begin with boolean logic, move to combinational and sequential design.'
+//         },
+//         {
+//           name: 'Communication Systems',
+//           notes: ['Analog Communication', 'Digital Communication', 'Information Theory'],
+//           videos: ['Communication Basics', 'Modulation Techniques', 'Digital Protocols'],
+//           roadmap: 'Start with analog basics, then digital concepts, finally advanced topics.'
+//         }
+//       ]
+//     },
+//     ME: {
+//       subjects: [
+//         {
+//           name: 'Thermodynamics',
+//           notes: ['Laws of Thermodynamics', 'Heat Transfer', 'Power Cycles'],
+//           videos: ['Thermo Basics', 'Heat Exchange', 'Engine Cycles'],
+//           roadmap: 'Master fundamental laws, then applications and cycles.'
+//         },
+//         {
+//           name: 'Machine Design',
+//           notes: ['Machine Elements', 'Design Principles', 'CAD Fundamentals'],
+//           videos: ['Design Basics', 'Element Analysis', 'CAD Tutorial'],
+//           roadmap: 'Learn basic elements, then design principles, finally CAD tools.'
+//         }
+//       ]
+//     },
+//     Civil: {
+//       subjects: [
+//         {
+//           name: 'Structural Analysis',
+//           notes: ['Force Systems', 'Beams & Frames', 'Structure Design'],
+//           videos: ['Structure Basics', 'Beam Analysis', 'Frame Design'],
+//           roadmap: 'Start with force concepts, then beam analysis, finally complete structures.'
+//         },
+//         {
+//           name: 'Geotechnical Engineering',
+//           notes: ['Soil Mechanics', 'Foundation Design', 'Earth Structures'],
+//           videos: ['Soil Properties', 'Foundation Types', 'Earth Retaining Structures'],
+//           roadmap: 'Begin with soil mechanics, move to foundations, then earth structures.'
+//         }
+//       ]
+//     }
+//   };
+
+//   return (
+//     <Container fluid className="py-4">
+//       <h1 className="text-center mb-4">Engineering Learning Hub</h1>
+      
+//       <Tab.Container activeKey={key} onSelect={(k) => setKey(k)}>
+//         <Row>
+//           <Col sm={3}>
+//             <Nav variant="pills" className="flex-column">
+//               {Object.keys(courses).map((branch) => (
+//                 <Nav.Item key={branch}>
+//                   <Nav.Link eventKey={branch} className="mb-2">
+//                     {branch}
+//                   </Nav.Link>
+//                 </Nav.Item>
+//               ))}
+//             </Nav>
+//           </Col>
+          
+//           <Col sm={9}>
+//             <Tab.Content>
+//               {Object.entries(courses).map(([branch, data]) => (
+//                 <Tab.Pane key={branch} eventKey={branch}>
+//                   <h2 className="mb-4">{branch} Engineering</h2>
+                  
+//                   {data.subjects.map((subject, index) => (
+//                     <Card key={index} className="mb-4">
+//                       <Card.Header className="bg-primary text-white">
+//                         <h3 className="mb-0">{subject.name}</h3>
+//                       </Card.Header>
+                      
+//                       <Card.Body>
+//                         <Accordion>
+//                           <Accordion.Item eventKey="0">
+//                             <Accordion.Header>Digital Notes & PDFs</Accordion.Header>
+//                             <Accordion.Body>
+//                               <ul>
+//                                 {subject.notes.map((note, i) => (
+//                                   <li key={i}>
+//                                     {note}
+//                                     <Button variant="link" className="ms-2">Download PDF</Button>
+//                                   </li>
+//                                 ))}
+//                               </ul>
+//                             </Accordion.Body>
+//                           </Accordion.Item>
+                          
+//                           <Accordion.Item eventKey="1">
+//                             <Accordion.Header>Video Lectures</Accordion.Header>
+//                             <Accordion.Body>
+//                               <ul>
+//                                 {subject.videos.map((video, i) => (
+//                                   <li key={i}>
+//                                     {video}
+//                                     <Button variant="link" className="ms-2">Watch Video</Button>
+//                                   </li>
+//                                 ))}
+//                               </ul>
+//                             </Accordion.Body>
+//                           </Accordion.Item>
+                          
+//                           <Accordion.Item eventKey="2">
+//                             <Accordion.Header>Learning Roadmap</Accordion.Header>
+//                             <Accordion.Body>
+//                               <p>{subject.roadmap}</p>
+//                             </Accordion.Body>
+//                           </Accordion.Item>
+//                         </Accordion>
+//                       </Card.Body>
+//                     </Card>
+//                   ))}
+//                 </Tab.Pane>
+//               ))}
+//             </Tab.Content>
+//           </Col>
+//         </Row>
+//       </Tab.Container>
+//     </Container>
+//   );
+// };
+
+// export default LearningHub;
+
+
+//2
 
 import React, { useState } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Container, Nav, Tab, Row, Col, Card, Button, Accordion } from 'react-bootstrap';
-import Navbar from "@/components/Navbar";
 
 const LearningHub = () => {
   const [key, setKey] = useState('EEE');
@@ -584,10 +756,8 @@ const LearningHub = () => {
   };
 
   return (
-    
     <Container fluid className="py-4">
-      <Navbar/>
-      {/* <h1 className="text-center mb-4">Engineering Learning Hub</h1> */}
+      <h1 className="text-center mb-4">Engineering Learning Hub</h1>
       
       <Tab.Container activeKey={key} onSelect={(k) => setKey(k)}>
         <Row>
