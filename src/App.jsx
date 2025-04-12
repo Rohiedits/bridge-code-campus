@@ -13,7 +13,6 @@ import CodeLab from "./pages/CodeLab";
 import NotFound from "./pages/NotFound";
 import ResumeBuilder from "./pages/resume";
 import Learn from './pages/Learn-to-earn';
-import CodeEditor from "./pages/Code-compiler";
 import Test from './pages/sampletests'
 import Dailycode from './pages/Daily-code'
 import Ai from './pages/ai'
@@ -38,7 +37,6 @@ const App = () => (
           <Route path="/codelab" element={<CodeLab />} />
           <Route path="/ResumeBuilder" element={<ResumeBuilder />} />
           <Route path="/Learn" element={<Learn />} />
-          <Route path="/CodeEditor" element={<CodeEditor />} />
           <Route path="/Test" element={<Test />} />
           <Route path="/Dailycode" element={<Dailycode />} />
           <Route path="/Ai" element={<Ai />} />
