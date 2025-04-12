@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -18,7 +17,7 @@ import Dailycode from './pages/Daily-code'
 import Ai from './pages/ai'
 import p2 from './pages/p2'
 import p3 from './pages/p3'
-import p4 from './pages/p4'
+import P4 from './pages/p4'
 
 const queryClient = new QueryClient();
 
@@ -42,9 +41,7 @@ const App = () => (
           <Route path="/Ai" element={<Ai />} />
           <Route path="/p2" element={<p2 />} />
           <Route path="/p3" element={<p3 />} />
-          <Route path="/p4" element={<p4/>} />
-         
-          
+          <Route path="/p4" element={<P4 />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
