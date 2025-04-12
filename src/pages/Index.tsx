@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { BookOpen, Code, GraduationCap, Laptop, LayoutDashboard, LineChart, MessagesSquare, User, UserCheck, Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import Ai from '../pages/ai'
 
 const Index = () => {
   return (
@@ -36,6 +37,22 @@ const Index = () => {
                 View Demo
               </Button>
             </Link>
+            <Link to="/ResumeBuilder">
+              <Button size="lg" variant="outline" className="text-base px-8">
+              Resume Builder
+              </Button>
+            </Link>
+            <Link to="/Learn">
+              <Button size="lg" variant="outline" className="text-base px-8">
+              Learn
+              </Button>
+            </Link>
+            
+            {/* <Link to="/CodeEditor">
+              <Button size="lg" variant="outline" className="text-base px-8">
+              compiler
+              </Button>
+            </Link> */}
           </div>
           
           <div className="mt-16 w-full max-w-4xl bg-card border rounded-xl shadow-lg overflow-hidden">
@@ -262,6 +279,9 @@ const Index = () => {
           </div>
         </div>
       </section>
+      <div>
+        <Ai/>
+      </div>
       
       {/* Footer */}
       <footer className="bg-card border-t">

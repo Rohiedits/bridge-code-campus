@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import CourseCard from "@/components/Course/CourseCard";
 import AssignmentCard from "@/components/Course/AssignmentCard";
+import Ai from '../../pages/ai'
 
 // Mock data for student dashboard
 const courses = [
@@ -42,42 +43,7 @@ const courses = [
 ];
 
 const assignments = [
-  {
-    id: "1",
-    title: "Binary Tree Implementation",
-    courseTitle: "Data Structures & Algorithms",
-    dueDate: "2025-05-15T23:59:59",
-    status: "in-progress",
-    type: "coding",
-    points: 100,
-  },
-  {
-    id: "2",
-    title: "CSS Grid Layout Exercise",
-    courseTitle: "Web Development Fundamentals",
-    dueDate: "2025-05-18T23:59:59",
-    status: "not-started",
-    type: "coding",
-    points: 50,
-  },
-  {
-    id: "3",
-    title: "Hash Maps Quiz",
-    courseTitle: "Data Structures & Algorithms",
-    dueDate: "2025-05-10T23:59:59",
-    status: "overdue",
-    type: "quiz",
-    points: 25,
-  },
-  {
-    id: "4",
-    title: "SQL Joins and Subqueries",
-    courseTitle: "Database Systems",
-    dueDate: "2025-05-01T23:59:59",
-    status: "completed",
-    type: "theory",
-    points: 75,
-  },
+  
 ];
 
 // Practice problems stats
@@ -122,7 +88,7 @@ const StudentDashboard = () => {
       <div className="flex flex-col md:flex-row gap-6">
         <Card className="md:w-2/3">
           <CardHeader className="pb-2">
-            <CardTitle>Welcome back, John!</CardTitle>
+            <CardTitle>Welcome..</CardTitle>
             <CardDescription>
               Here's an overview of your learning progress
             </CardDescription>
@@ -216,7 +182,7 @@ const StudentDashboard = () => {
               ))}
               
               <Button variant="outline" size="sm" className="w-full">
-                View Full Schedule
+                {/* View Full Schedule */}
               </Button>
             </div>
           </CardContent>
@@ -229,7 +195,7 @@ const StudentDashboard = () => {
           <h2 className="text-2xl font-bold">Recent Assignments</h2>
           <Link to="/assignments">
             <Button variant="outline" size="sm">
-              View All
+              {/* View All */}
             </Button>
           </Link>
         </div>
@@ -331,8 +297,10 @@ const StudentDashboard = () => {
                 </div>
               </div>
             </div>
-            
-            <Link to="/codelab">
+            <div>
+              <Ai/>
+            </div>
+            <Link to="/Dailycode">
               <Button className="w-full">
                 <Code className="mr-2 h-4 w-4" />
                 Practice Coding
